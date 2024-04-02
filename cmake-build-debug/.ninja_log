@@ -1,0 +1,15 @@
+# ninja log v5
+98	122	1712094241931503000	libbarfetto.a	71817ce8d0162bca
+0	97	1712094241905434776	CMakeFiles/barfetto.dir/src/library.c.o	c6163a9bb5c13065
+0	104	1712095128044915458	build.ninja	c7cb1729699752a7
+1	103	1712095128044915458	build.ninja	c7cb1729699752a7
+0	41	1712095128093608961	CMakeFiles/barfetto.dir/src/color.c.o	1812bea7bef89773
+2	206	1712095197022673804	CMakeFiles/barfetto.dir/src/layer.c.o	e6065c4e192ad100
+2	183	1712095242413303943	CMakeFiles/barfetto.dir/src/image.c.o	c4b4a0d4587180b5
+1	185	1712095242415516315	CMakeFiles/barfetto.dir/src/barf_object.c.o	f258631d24fd4284
+1	191	1712095242420817181	CMakeFiles/barfetto.dir/src/animation.c.o	19e721008d174c23
+2	200	1712095242430743456	CMakeFiles/barfetto.dir/src/entity.c.o	f3121138627365a8
+2	218	1712095242448592385	CMakeFiles/barfetto.dir/src/renderer.c.o	7fe2eda202985d4f
+2	221	1712095242452874337	CMakeFiles/barfetto.dir/src/camera.c.o	3638d2ca5487efd5
+184	403	1712095242636557243	CMakeFiles/barfetto.dir/src/terminator_listener.c.o	ee54b143ad73aec1
+403	436	1712095242672319000	libbarfetto.a	1d17941ceb73b3bc

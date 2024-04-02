@@ -1,0 +1,3 @@
+/Users/god/Projects/barfetto/cmake-build-debug/CMakeFiles/barfetto.dir
+/Users/god/Projects/barfetto/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/god/Projects/barfetto/cmake-build-debug/CMakeFiles/rebuild_cache.dir
