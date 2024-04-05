@@ -1,6 +1,6 @@
 /**
  * MIT License
- * Copyright (c) [2021] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
+ * Copyright (c) [2024] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 #include <SDL.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <coremio/memory.h>
 #include <coremio/list.h>
 struct s_layer;
 struct s_renderer;
@@ -35,13 +36,15 @@ typedef enum e_barf_object_listener_processed_events {
   e_barf_object_listener_processed_event_consumed,
   e_barf_object_listener_processed_event_terminate
 } e_barf_object_listener_processed_events;
-typedef e_barf_object_listener_processed_events (*l_barf_listen)(struct s_barf_object *, struct s_renderer *, SDL_Event *event);
+typedef e_barf_object_listener_processed_events (*l_barf_listen)(struct s_barf_object *, struct s_renderer *, SDL_Event *);
 typedef void (*l_barf_render)(struct s_barf_object *, struct s_renderer *);
+typedef void (*l_barf_status)(struct s_barf_object *, const char *);
 typedef void (*l_barf_delete)(struct s_barf_object *);
 typedef struct s_barf_object {
   s_list_node head;
   l_barf_listen f_barf_listen;
   l_barf_render f_barf_render;
+  l_barf_status f_barf_status;
   l_barf_delete f_barf_delete;
   struct s_layer *owner;
   unsigned int ticks_last_listen, ticks_last_render;

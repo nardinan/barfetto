@@ -1,6 +1,6 @@
 /**
  * MIT License
- * Copyright (c) [2021] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
+ * Copyright (c) [2024] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,4 +45,3 @@ extern void p_animation_render(s_animation *self, struct s_renderer *renderer);
 extern s_barf_object *f_animation_malloc(s_animation *holder, const char *source, s_point destination, size_t width, size_t height,
     unsigned int ticks_next_frame) __attribute__((unused));
 #endif /* ANIMATION_H */
-

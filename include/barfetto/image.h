@@ -1,6 +1,6 @@
 /**
  * MIT License
- * Copyright (c) [2021] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
+ * Copyright (c) [2024] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

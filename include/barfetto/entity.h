@@ -1,6 +1,6 @@
 /**
  * MIT License
- * Copyright (c) [2021] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
+ * Copyright (c) [2024] The Barfing Fox [Andrea Nardinocchi (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,25 +22,25 @@
  */
 #ifndef ENTITY_H
 #define ENTITY_H
-#include "animation.h"
-typedef struct s_entity_status_node {
-  s_dictionary_node head;
-  s_color mask;
-  unsigned int index_first_frame, index_last_frame, ticks_next_frame;
-  e_animation_behaviours behaviour;
-  float speed_x, speed_y;
-} s_entity_status_node;
+#include <SDL_events.h>
+#include <coremio/list.h>
+#include "barf_object.h"
+#include "renderer.h"
+struct s_entity;
+typedef void (*l_entity_event)(struct s_entity *, s_renderer *);
+typedef struct s_entity_trigger {
+  s_list_node head;
+  char *status_key;
+  l_barf_listen f_entity_listen;
+  l_entity_event f_entity_event;
+  bool listening;
+} s_entity_trigger;
 typedef struct s_entity {
-  s_animation head;
-  s_dictionary statuses;
-  s_color mask;
-  float speed_x, speed_y;
-  unsigned int ticks_next_frame, ticks_last;
-  bool hooverd;
+  s_barf_object head;
+  s_barf_object *renderable;
+  s_list triggers;
 } s_entity;
-extern s_barf_object *f_entity_malloc(s_entity *holder, const char *source, s_point destination, size_t width, size_t height,
-    unsigned int ticks_next_frame) __attribute__((unused));
-extern s_entity_status_node *f_entity_get_status(s_entity *self, const char *key);
-extern void f_entity_set_status(s_entity *self, const char *key);
+extern s_barf_object *f_entity_malloc(s_entity *holder, s_barf_object *renderable, s_list_node **triggers) __attribute__((unused));
+extern s_entity_trigger *f_entity_new_trigger(const char *status_key, l_barf_listen f_event_listen, l_entity_event f_entity_event,
+  bool listening) __attribute__((unused));
 #endif /* ENTITY_H */
-

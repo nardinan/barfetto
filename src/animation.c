@@ -1,6 +1,6 @@
 /**
  * MIT License
- * Copyright (c) [2021] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
+ * Copyright (c) [2024] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -60,7 +60,7 @@ void p_animation_render(s_animation *self, s_renderer *renderer) {
 }
 s_barf_object *f_animation_malloc(s_animation *holder, const char *source, s_point destination, size_t width, size_t height, unsigned int ticks_next_frame) {
   s_animation *result = holder;
-  if ((result) || (result = (s_animation *)malloc(sizeof(s_animation)))) {
+  if ((result) || (result = (s_animation *)d_malloc(sizeof(s_animation)))) {
     memset(result, 0, sizeof(s_animation));
     if ((result = (s_animation *)f_image_malloc((s_image *)result, source, destination))) {
       result->selected_frame.width = width;

@@ -1,6 +1,6 @@
 /**
  * MIT License
- * Copyright (c) [2021] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
+ * Copyright (c) [2024] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ coremio_result f_renderer_initialize(s_renderer *renderer, const char *title, si
   memset(renderer, 0, sizeof(s_renderer));
   if (((renderer->layers = (s_layer **)f_array_malloc(d_renderer_layer_bucket, sizeof(s_layer *)))) &&
       ((renderer->cameras = (s_camera **)f_array_malloc(d_renderer_camera_bucket, sizeof(s_camera *))))) {
+    /* TTF initialization */
     if (SDL_Init(SDL_INIT_VIDEO) >= 0) {
       SDL_StartTextInput();
       renderer->screen_width = screen_width;
@@ -57,7 +58,7 @@ coremio_result f_renderer_initialize(s_renderer *renderer, const char *title, si
     result = SHIT;
   return result;
 }
-void p_renderer_teardown(s_renderer *renderer) {
+static void p_renderer_teardown(s_renderer *renderer) {
   if (renderer->layers) {
     for (size_t index = 0; index < d_array_size(renderer->layers); ++index)
       if (renderer->layers[index]) {
@@ -66,12 +67,22 @@ void p_renderer_teardown(s_renderer *renderer) {
           f_list_remove(&(renderer->layers[index]->list), (s_list_node *)current_object);
           if (current_object->f_barf_delete)
             current_object->f_barf_delete(current_object);
-          free(current_object);
+          d_free(current_object);
         }
-        free(renderer->layers[index]);
+        d_free(renderer->layers[index]);
         renderer->layers[index] = NULL;
       }
     f_array_free(renderer->layers);
+  }
+  if (renderer->cameras) {
+    for (size_t index = 0; index < d_array_size(renderer->cameras); ++index)
+      if (renderer->cameras[index]) {
+        if (((s_barf_object *)renderer->cameras[index])->f_barf_delete)
+          ((s_barf_object *)renderer->cameras[index])->f_barf_delete((s_barf_object *)renderer->cameras[index]);
+        d_free(renderer->cameras[index]);
+        renderer->cameras[index] = NULL;
+      }
+    f_array_free(renderer->cameras);
   }
   if (renderer->renderer)
     SDL_DestroyRenderer(renderer->renderer);
@@ -147,7 +158,7 @@ s_layer *f_renderer_get_layer(s_renderer *renderer, unsigned int layer) {
   s_layer *result = NULL;
   if ((renderer->layers = (s_layer **)f_array_validate_access(renderer->layers, layer)))
     if (!(result = renderer->layers[layer]))
-      if ((renderer->layers[layer] = (struct s_layer *)malloc(sizeof(s_layer)))) {
+      if ((renderer->layers[layer] = (struct s_layer *)d_malloc(sizeof(s_layer)))) {
         memset(renderer->layers[layer], 0, sizeof(s_layer));
         renderer->layers[layer]->visible = true;
         result = renderer->layers[layer];

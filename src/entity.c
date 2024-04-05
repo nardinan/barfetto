@@ -1,6 +1,6 @@
 /**
  * MIT License
- * Copyright (c) [2021] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
+ * Copyright (c) [2024] The Barfing Fox [Andrea Nardinocchi (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,63 +21,77 @@
  * SOFTWARE.
  */
 #include "../include/barfetto/entity.h"
-#include "../include/barfetto/renderer.h"
-e_barf_object_listener_processed_events p_entity_listener(s_entity *self, struct s_renderer *renderer, SDL_Event *event) {
+static void p_entity_render(s_entity *self, struct s_renderer *renderer) {
+  if ((self->renderable) && (self->renderable->f_barf_render))
+    self->renderable->f_barf_render(self->renderable, renderer);
+}
+static void p_entity_status(s_entity *self, const char *status) {
+  if ((self->renderable) && (self->renderable->f_barf_status))
+    self->renderable->f_barf_status(self->renderable, status);
+}
+static e_barf_object_listener_processed_events p_entity_listen(s_entity *self, struct s_renderer *renderer, SDL_Event *event) {
   e_barf_object_listener_processed_events result = e_barf_object_listener_processed_event_ignored;
-  s_animation *cast_animation = (s_animation *)&(self->head);
-  s_image *cast_image = (s_image *)&(cast_animation->head);
-  int mouse_x, mouse_y;
-  f_camera_get_mouse_position(renderer->selected_camera, &mouse_x, &mouse_y);
-  self->hooverd = false;
-  if ((mouse_x >= cast_image->destination.x) && (mouse_x < (cast_image->destination.x + cast_image->source.width)) &&
-      (mouse_y >= cast_image->destination.y) && (mouse_y < (cast_image->destination.y + cast_image->source.height)))
-    self->hooverd = true;
+  if ((self->renderable) && (self->renderable->f_barf_listen))
+    result = self->renderable->f_barf_listen(self->renderable, renderer, event);
+  if ((result != e_barf_object_listener_processed_event_consumed) && (result != e_barf_object_listener_processed_event_terminate))
+    if (self->triggers.entries > 0) {
+      s_entity_trigger *trigger;
+      d_list_foreach(&(self->triggers), trigger, s_entity_trigger)
+        if ((trigger->f_entity_listen) && (trigger->listening)) {
+          e_barf_object_listener_processed_events local_event_result = trigger->f_entity_listen((s_barf_object *)self, renderer, event);
+          if ((local_event_result == e_barf_object_listener_processed_event_processed_and_forwarded) ||
+              (local_event_result == e_barf_object_listener_processed_event_consumed)) {
+            if ((trigger->status_key) && (self->head.f_barf_status))
+              self->head.f_barf_status((s_barf_object *)self, trigger->status_key);
+            if (trigger->f_entity_event)
+              trigger->f_entity_event(self, renderer);
+            result = local_event_result;
+          } else if (local_event_result == e_barf_object_listener_processed_event_terminate)
+            result = local_event_result;
+          if ((result == e_barf_object_listener_processed_event_consumed) || (result == e_barf_object_listener_processed_event_terminate))
+            break;
+        }
+    }
   return result;
 }
-void p_entity_render(s_entity *self, struct s_renderer *renderer) {
-  unsigned int now_ticks = SDL_GetTicks(), elapsed = (now_ticks - self->ticks_last);
-  float displacement_x = (elapsed * self->speed_x), displacement_y = (elapsed * self->speed_y);
-  self->head.head.destination.x += displacement_x;
-  self->head.head.destination.y += displacement_y;
-  self->ticks_last = now_ticks;
-  p_animation_render(&(self->head), renderer);
+static void p_entity_delete(s_entity *self) {
+  s_entity_trigger *node;
+  while ((node = (s_entity_trigger *)self->triggers.head)) {
+    f_list_remove(&(self->triggers), self->triggers.head);
+    if (node->status_key)
+      d_free(node->status_key);
+    d_free(node);
+  }
 }
-s_barf_object *f_entity_malloc(s_entity *holder, const char *source, s_point destination, size_t width, size_t height, unsigned int ticks_next_frame) {
+s_barf_object *f_entity_malloc(s_entity *holder, s_barf_object *renderable, s_list_node **triggers) {
   s_entity *result = holder;
-  if ((result) || (result = (s_entity *)malloc(sizeof(s_entity)))) {
+  if ((result) || (result = (s_entity *)d_malloc(sizeof(s_entity)))) {
     memset(result, 0, sizeof(s_entity));
-    if ((result = (s_entity *)f_animation_malloc((s_animation *)result, source, destination, width, height, ticks_next_frame))) {
-      result->ticks_next_frame = ticks_next_frame;
-      result->head.behaviour = e_animation_behaviour_hidden;
-      f_dictionary_initialize(&(result->statuses), sizeof(s_entity_status_node));
-      result->head.head.head.f_barf_render = (l_barf_render)p_entity_render;
-      result->head.head.head.f_barf_listen = (l_barf_listen)p_entity_listener;
-    }
+    result->renderable = renderable;
+    result->head.f_barf_render = (l_barf_render)p_entity_render;
+    result->head.f_barf_listen = (l_barf_listen)p_entity_listen;
+    result->head.f_barf_status = (l_barf_status)p_entity_status;
+    result->head.f_barf_delete = (l_barf_delete)p_entity_delete;
+    if (triggers)
+      for (size_t index = 0; (triggers[index]); ++index)
+        f_list_append(&(result->triggers), triggers[index], e_list_insert_tail);
   }
   return (s_barf_object *)result;
 }
-s_entity_status_node *f_entity_get_status(s_entity *self, const char *key) {
-  bool is_created = false;
-  s_entity_status_node *result = (s_entity_status_node *)f_dictionary_get_informed(&(self->statuses), key, &is_created);
-  if (is_created) {
-    result->ticks_next_frame = self->ticks_next_frame;
-    result->mask = self->mask;
+s_entity_trigger *f_entity_new_trigger(const char *status_key, l_barf_listen f_event_listen, l_entity_event f_entity_event, bool listening) {
+  s_entity_trigger *result;
+  if ((result = (s_entity_trigger *)d_malloc(sizeof(s_entity_trigger)))) {
+    memset(result, 0, sizeof(s_entity_trigger));
+    if (status_key) {
+      size_t length_status_key = strlen(status_key);
+      if ((result->status_key = (char *)d_malloc(length_status_key + 1))) {
+        strncpy(result->status_key, status_key, length_status_key);
+        result->status_key[length_status_key] = 0;
+      }
+    }
+    result->f_entity_listen = f_event_listen;
+    result->f_entity_event = f_entity_event;
+    result->listening = listening;
   }
   return result;
-}
-void f_entity_set_status(s_entity *self, const char *key) {
-  s_entity_status_node *current_status = f_entity_get_status(self, key);
-  if (current_status) {
-    self->head.ticks_next_frame = current_status->ticks_next_frame;
-    self->head.index_first_frame = current_status->index_first_frame;
-    self->head.index_last_frame = current_status->index_last_frame;
-    if (self->head.index < self->head.index_first_frame)
-      self->head.index = self->head.index_first_frame;
-    if (self->head.index > self->head.index_last_frame)
-      self->head.index = self->head.index_last_frame;
-    self->head.behaviour = current_status->behaviour;
-    self->head.head.mask = current_status->mask;
-    self->speed_x = current_status->speed_x;
-    self->speed_y = current_status->speed_y;
-  }
 }

@@ -1,6 +1,6 @@
 /**
  * MIT License
- * Copyright (c) [2021] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
+ * Copyright (c) [2024] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,13 @@
  */
 #include "../include/barfetto/camera.h"
 #include "../include/barfetto/renderer.h"
-void p_camera_delete(s_camera *self) {
+static void p_camera_delete(s_camera *self) {
   if (self->container)
     SDL_DestroyTexture(self->container);
 }
 s_barf_object *f_camera_malloc(s_camera *holder, s_rectangle visible_area, s_rectangle screen_destination) {
   s_camera *result = holder;
-  if ((result) || (result = (s_camera *)malloc(sizeof(s_camera)))) {
+  if ((result) || (result = (s_camera *)d_malloc(sizeof(s_camera)))) {
     memset(result, 0, sizeof(s_camera));
     result->visible_area = visible_area;
     result->screen_destination= screen_destination;

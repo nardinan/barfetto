@@ -1,6 +1,6 @@
 /**
  * MIT License
- * Copyright (c) [2021] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
+ * Copyright (c) [2024] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,7 @@ void p_image_render(s_image *self, struct s_renderer *renderer) {
     }
   }
 }
-void p_image_delete(s_image *self) {
+static void p_image_delete(s_image *self) {
   if (self->texture)
     if ((self->texture->references > 0) && ((--self->texture->references) == 0)) {
       if (self->texture->unoptimized_surface)
@@ -59,7 +59,7 @@ void p_image_delete(s_image *self) {
 }
 s_barf_object *f_image_malloc(s_image *holder, const char *source, s_point destination) {
   s_image *result = holder;
-  if ((result) || (result = (s_image *)malloc(sizeof(s_image)))) {
+  if ((result) || (result = (s_image *)d_malloc(sizeof(s_image)))) {
     memset(result, 0, sizeof(s_image));
     if (dictionary_surface_cache.node_size != sizeof(s_surface_cache_node))
       f_dictionary_initialize(&dictionary_surface_cache, sizeof(s_surface_cache_node));

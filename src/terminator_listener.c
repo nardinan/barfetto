@@ -1,6 +1,6 @@
 /**
  * MIT License
- * Copyright (c) [2021] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
+ * Copyright (c) [2024] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 #include "../include/barfetto/terminator_listener.h"
-e_barf_object_listener_processed_events f_terminator_listen(struct s_barf_object *self, struct s_renderer *renderer, SDL_Event *event) {
+static e_barf_object_listener_processed_events p_terminator_listen(struct s_barf_object *self, struct s_renderer *renderer, SDL_Event *event) {
   e_barf_object_listener_processed_events result = e_barf_object_listener_processed_event_ignored;
   if (event->type == SDL_QUIT)
     result = e_barf_object_listener_processed_event_terminate;
@@ -29,9 +29,9 @@ e_barf_object_listener_processed_events f_terminator_listen(struct s_barf_object
 }
 s_barf_object *f_terminator_listener_malloc(void) {
   s_barf_object *result;
-  if ((result = (s_barf_object *)malloc(sizeof(s_barf_object)))) {
+  if ((result = (s_barf_object *)d_malloc(sizeof(s_barf_object)))) {
     memset(result, 0, sizeof(s_barf_object));
-    result->f_barf_listen = f_terminator_listen;
+    result->f_barf_listen = p_terminator_listen;
   }
   return result;
 }
