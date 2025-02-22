@@ -3,9 +3,18 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="BackendCodeEditorMiscSettings">
+    <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
+    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
+  </component>
   <component name="CMakePresetLoader">{
   &quot;useNewFormat&quot;: true
 }</component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
   <component name="CMakeReloadState">
     <option name="reloaded" value="true" />
   </component>
@@ -21,52 +30,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9244b881-8ebe-48c2-8afa-fb218325d09a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/animation_pack.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tainted_sails/src/tainted_sails.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/cmakeFiles-v1-c202847aa26574c20393.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-32ed9d6815cf7844af08.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/index-2024-04-02T21-58-48-0052.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/target-barfetto-Debug-362c5097301d3a72ba7e.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/animation.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/animation.c.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/barf_object.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/barf_object.c.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/camera.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/camera.c.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/entity.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/entity.c.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/image.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/image.c.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/layer.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/layer.c.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/renderer.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/renderer.c.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/terminator_listener.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/barfetto.dir/src/terminator_listener.c.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/rules.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/rules.ninja" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/build.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/build.ninja" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/compile_commands.json" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/compile_commands.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/libbarfetto.a" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/libbarfetto.a" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake/FindSDL2.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake/FindSDL2.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/barfetto/animation.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/barfetto/animation.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/barfetto/barf_object.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/barfetto/barf_object.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/barfetto/camera.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/barfetto/camera.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/barfetto/color.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/barfetto/color.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/barfetto/entity.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/barfetto/entity.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/barfetto/image.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/barfetto/image.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/barfetto/layer.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/barfetto/layer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/barfetto/point.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/barfetto/point.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/barfetto/rectangle.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/barfetto/rectangle.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/barfetto/renderer.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/barfetto/renderer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/barfetto/terminator_listener.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/barfetto/terminator_listener.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/animation.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/animation.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/barf_object.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/barf_object.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/camera.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/camera.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/color.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/color.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/entity.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/entity.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/image.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/image.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/layer.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/layer.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/terminator_listener.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/terminator_listener.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tainted_sails/tainted_sails.c" beforeDir="false" afterPath="$PROJECT_DIR$/include/barfetto/animation_pack.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tainted_sails/src/tainted_sails.c" beforeDir="false" afterPath="$PROJECT_DIR$/tainted_sails/src/tainted_sails.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,6 +47,17 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/include/barfetto/barf_object.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/include/barfetto/entity.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/animation.c" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/animation_pack.c" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/entity.c" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/image.c" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/renderer.c" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/terminator_listener.c" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/tainted_sails/src/tainted_sails.c" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -104,18 +83,22 @@
     &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
     &quot;CMake Debug.barfetto.executor&quot;: &quot;Debug&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/god/Projects/barfetto&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.updates&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.folding&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -127,9 +110,9 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
     <configuration name="barfetto" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="barfetto" TARGET_NAME="barfetto" CONFIG_NAME="Debug">
@@ -151,7 +134,12 @@
       <workItem from="1712177839989" duration="6266000" />
       <workItem from="1712226339984" duration="7989000" />
       <workItem from="1712268976243" duration="1221000" />
-      <workItem from="1712304904803" duration="16440000" />
+      <workItem from="1712304904803" duration="27969000" />
+      <workItem from="1714793643129" duration="558000" />
+      <workItem from="1729792874141" duration="107000" />
+      <workItem from="1735053775862" duration="1753000" />
+      <workItem from="1737038234001" duration="57000" />
+      <workItem from="1740225447104" duration="4000" />
     </task>
     <servers />
   </component>

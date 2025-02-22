@@ -73,10 +73,10 @@ int main(int argc, char *argv[]) {
     f_animation_pack_get_status(animation_pack, "up")->index_last_frame = 47;
     f_animation_pack_get_status(animation_pack, "up")->speed_y = -(((float)(rand() % 100) / 1000.0) + 0.1);
     s_entity *entity = (s_entity *)f_entity_malloc(NULL, (s_barf_object *)animation_pack, (s_list_node *[]){
-      (s_list_node *)f_entity_new_trigger("up", (l_barf_listen)f_vertical_move_up, (l_entity_event)f_vertical_trigger_up, true),
-      (s_list_node *)f_entity_new_trigger("down", (l_barf_listen)f_vertical_move_down, NULL, true),
-      (s_list_node *)f_entity_new_trigger("left", (l_barf_listen)f_vertical_move_left, NULL, true),
-      (s_list_node *)f_entity_new_trigger("right", (l_barf_listen)f_vertical_move_right, NULL, true),
+      (s_list_node *)f_entity_new_trigger_change_status("up", (l_barf_listen)f_vertical_move_up, (l_entity_event)f_vertical_trigger_up, true),
+      (s_list_node *)f_entity_new_trigger_change_status("down", (l_barf_listen)f_vertical_move_down, NULL, true),
+      (s_list_node *)f_entity_new_trigger_change_status("left", (l_barf_listen)f_vertical_move_left, NULL, true),
+      (s_list_node *)f_entity_new_trigger_change_status("right", (l_barf_listen)f_vertical_move_right, NULL, true),
       NULL
     });
     f_layer_append(f_renderer_get_layer(&renderer, 0), (s_barf_object *)entity);

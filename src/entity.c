@@ -78,7 +78,7 @@ s_barf_object *f_entity_malloc(s_entity *holder, s_barf_object *renderable, s_li
   }
   return (s_barf_object *)result;
 }
-s_entity_trigger *f_entity_new_trigger(const char *status_key, l_barf_listen f_event_listen, l_entity_event f_entity_event, bool listening) {
+s_entity_trigger *f_entity_new_trigger_change_status(const char *status_key, l_barf_listen f_event_listen, l_entity_event f_entity_event, bool listening) {
   s_entity_trigger *result;
   if ((result = (s_entity_trigger *)d_malloc(sizeof(s_entity_trigger)))) {
     memset(result, 0, sizeof(s_entity_trigger));

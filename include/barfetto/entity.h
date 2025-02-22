@@ -41,6 +41,6 @@ typedef struct s_entity {
   s_list triggers;
 } s_entity;
 extern s_barf_object *f_entity_malloc(s_entity *holder, s_barf_object *renderable, s_list_node **triggers) __attribute__((unused));
-extern s_entity_trigger *f_entity_new_trigger(const char *status_key, l_barf_listen f_event_listen, l_entity_event f_entity_event,
+extern s_entity_trigger *f_entity_new_trigger_change_status(const char *status_key, l_barf_listen f_event_listen, l_entity_event f_entity_event,
   bool listening) __attribute__((unused));
 #endif /* ENTITY_H */
