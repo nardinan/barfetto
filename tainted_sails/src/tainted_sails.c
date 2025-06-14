@@ -21,10 +21,12 @@
  * SOFTWARE.
  */
 #include <time.h>
+#include <fcntl.h>
 #include "../../include/barfetto/terminator_listener.h"
 #include "../../include/barfetto/renderer.h"
 #include "../../include/barfetto/animation_pack.h"
 #include "../../include/barfetto/entity.h"
+#include <coremio/lisp.h>
 const char *animations[] = {
   "down",
   "left",
@@ -50,12 +52,53 @@ e_barf_object_listener_processed_events f_vertical_move_right(s_entity *self, s_
 void f_vertical_trigger_up(s_entity *self) {
   printf("Up up up\n");
 }
+s_lisp_node *f_lisp_sum(s_lisp *lisp, s_lisp_environment *environment) {
+  const s_lisp_node_environment *value_a = f_lisp_lookup_environment_label("a", environment),
+  *value_b = f_lisp_lookup_environment_label("b", environment);
+  s_lisp_node *result = NULL;
+  if ((d_lisp_is_numeric(value_a->value)) && (d_lisp_is_numeric(value_b->value)))
+    result = f_lisp_generate_node_from_token(lisp,
+      f_tokens_new_token_value(value_a->value->value.token->token.token_value + value_b->value->value.token->token.token_value));
+  else
+    fprintf(stderr, "error <%s> as we got a sum of non-numeric values\n", __FUNCTION__);
+  return result;
+}
+s_lisp_node *f_lisp_subtract(s_lisp *lisp, s_lisp_environment *environment) {
+  const s_lisp_node_environment *value_a = f_lisp_lookup_environment_label("a", environment),
+  *value_b = f_lisp_lookup_environment_label("b", environment);
+  s_lisp_node *result = NULL;
+  if ((d_lisp_is_numeric(value_a->value)) && (d_lisp_is_numeric(value_b->value)))
+    result = f_lisp_generate_node_from_token(lisp,
+      f_tokens_new_token_value(value_a->value->value.token->token.token_value - value_b->value->value.token->token.token_value));
+  else
+    fprintf(stderr, "error <%s> as we got a sum of non-numeric values\n", __FUNCTION__);
+  return result;
+}
+s_lisp_node *f_lisp_print(s_lisp *lisp, s_lisp_environment *environment) {
+  const s_lisp_node_environment *value_list = f_lisp_lookup_environment_label("quoted_list", environment);
+  printf("printing the following environment: \n");
+  f_lisp_print_nodes_plain(STDOUT_FILENO, value_list->value);
+  printf("-- end print\n");
+  return NULL;
+}
 int main(int argc, char *argv[]) {
+  s_lisp environment;
+  int stream;
+  if ((stream = open("code.lisp", O_RDONLY)) != -1) {
+    f_lisp_environment_explode_stream(stream, &environment);
+    f_lisp_print_nodes_plain(STDOUT_FILENO, environment.root_code);
+    f_lisp_append_native_lambda(&environment, "+", (char*[]){"a", "b", NULL}, f_lisp_sum);
+    f_lisp_append_native_lambda(&environment, "-", (char*[]){"a", "b", NULL}, f_lisp_subtract);
+    f_lisp_append_native_lambda(&environment, "print", (char*[]){"quoted_list", NULL}, f_lisp_print);
+    f_lisp_execute(&environment);
+    f_lisp_free(&environment);
+    close(stream);
+  }
   s_renderer renderer;
   memset(&renderer, 0, sizeof(s_renderer));
   srand(time(NULL));
   s_animation_pack *animation_pack;
-  f_renderer_initialize(&renderer, "BARF editor", 800, 600, 60);
+  f_renderer_initialize(&renderer, "BARF editor", 800, 600, 30);
   f_layer_append(f_renderer_get_layer(&renderer, 0), f_terminator_listener_malloc());
   if ((animation_pack = (s_animation_pack *)f_animation_pack_malloc(NULL, "gianmario.png", (s_point){(rand() % 700) + 50, (rand() % 500) + 50}, 128, 140, 50))) {
     f_color_set(&(animation_pack)->mask, (s_color){255, 255, 255, 255});

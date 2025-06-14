@@ -24,7 +24,7 @@
 #include "../include/barfetto/renderer.h"
 s_animation_pack_status_node *f_animation_pack_get_status(s_animation_pack *self, const char *status) {
   bool is_created = false;
-  s_animation_pack_status_node *current_status = (s_animation_pack_status_node *)f_dictionary_get_informed(&(self->statuses), status, &is_created);
+  s_animation_pack_status_node *current_status = (s_animation_pack_status_node *)f_dictionary_get_or_create_informed(&(self->statuses), status, &is_created);
   if (is_created) {
     current_status->ticks_next_frame = self->ticks_next_frame;
     current_status->mask = self->mask;

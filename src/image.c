@@ -63,7 +63,7 @@ s_barf_object *f_image_malloc(s_image *holder, const char *source, s_point desti
     memset(result, 0, sizeof(s_image));
     if (dictionary_surface_cache.node_size != sizeof(s_surface_cache_node))
       f_dictionary_initialize(&dictionary_surface_cache, sizeof(s_surface_cache_node));
-    if ((result->texture = (s_surface_cache_node *)f_dictionary_get(&dictionary_surface_cache, source)) &&
+    if ((result->texture = (s_surface_cache_node *)f_dictionary_get_or_create(&dictionary_surface_cache, source)) &&
         ((result->texture->unoptimized_surface) || (result->texture->unoptimized_surface = IMG_Load(source)))) {
       ++result->texture->references;
       result->source.width = result->texture->unoptimized_surface->w;
