@@ -169,7 +169,7 @@ s_camera *f_renderer_get_camera(s_renderer *renderer, unsigned int camera) {
   s_camera *result = NULL;
   if ((renderer->cameras = (s_camera **)f_array_validate_access(renderer->cameras, camera)))
     if (!(result = renderer->cameras[camera])) {
-      s_rectangle visible_area = {(s_point){0, 0}, renderer->screen_width, renderer->screen_height};
+      const s_rectangle visible_area = {(s_point){0, 0}, renderer->screen_width, renderer->screen_height};
       if ((renderer->cameras[camera] = (s_camera *)f_camera_malloc(NULL, visible_area, visible_area))) {
         renderer->cameras[camera]->visible = true;
         result = renderer->cameras[camera];

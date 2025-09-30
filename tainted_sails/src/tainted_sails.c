@@ -20,13 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#define d_coremio_use_standard_malloc
 #include <time.h>
 #include <fcntl.h>
 #include "../../include/barfetto/terminator_listener.h"
 #include "../../include/barfetto/renderer.h"
 #include "../../include/barfetto/animation_pack.h"
 #include "../../include/barfetto/entity.h"
-#include <coremio/lisp.h>
+#include <coremio/nisp.h>
 const char *animations[] = {
   "down",
   "left",
@@ -52,46 +53,14 @@ e_barf_object_listener_processed_events f_vertical_move_right(s_entity *self, s_
 void f_vertical_trigger_up(s_entity *self) {
   printf("Up up up\n");
 }
-s_lisp_node *f_lisp_sum(s_lisp *lisp, s_lisp_environment *environment) {
-  const s_lisp_node_environment *value_a = f_lisp_lookup_environment_label("a", environment),
-  *value_b = f_lisp_lookup_environment_label("b", environment);
-  s_lisp_node *result = NULL;
-  if ((d_lisp_is_numeric(value_a->value)) && (d_lisp_is_numeric(value_b->value)))
-    result = f_lisp_generate_node_from_token(lisp,
-      f_tokens_new_token_value(value_a->value->value.token->token.token_value + value_b->value->value.token->token.token_value));
-  else
-    fprintf(stderr, "error <%s> as we got a sum of non-numeric values\n", __FUNCTION__);
-  return result;
-}
-s_lisp_node *f_lisp_subtract(s_lisp *lisp, s_lisp_environment *environment) {
-  const s_lisp_node_environment *value_a = f_lisp_lookup_environment_label("a", environment),
-  *value_b = f_lisp_lookup_environment_label("b", environment);
-  s_lisp_node *result = NULL;
-  if ((d_lisp_is_numeric(value_a->value)) && (d_lisp_is_numeric(value_b->value)))
-    result = f_lisp_generate_node_from_token(lisp,
-      f_tokens_new_token_value(value_a->value->value.token->token.token_value - value_b->value->value.token->token.token_value));
-  else
-    fprintf(stderr, "error <%s> as we got a sum of non-numeric values\n", __FUNCTION__);
-  return result;
-}
-s_lisp_node *f_lisp_print(s_lisp *lisp, s_lisp_environment *environment) {
-  const s_lisp_node_environment *value_list = f_lisp_lookup_environment_label("quoted_list", environment);
-  printf("printing the following environment: \n");
-  f_lisp_print_nodes_plain(STDOUT_FILENO, value_list->value);
-  printf("-- end print\n");
-  return NULL;
-}
 int main(int argc, char *argv[]) {
-  s_lisp environment;
+  s_nisp environment;
   int stream;
-  if ((stream = open("code.lisp", O_RDONLY)) != -1) {
-    f_lisp_environment_explode_stream(stream, &environment);
-    f_lisp_print_nodes_plain(STDOUT_FILENO, environment.root_code);
-    f_lisp_append_native_lambda(&environment, "+", (char*[]){"a", "b", NULL}, f_lisp_sum);
-    f_lisp_append_native_lambda(&environment, "-", (char*[]){"a", "b", NULL}, f_lisp_subtract);
-    f_lisp_append_native_lambda(&environment, "print", (char*[]){"quoted_list", NULL}, f_lisp_print);
-    f_lisp_execute(&environment);
-    f_lisp_free(&environment);
+  if ((stream = open("code.nisp", O_RDONLY)) != -1) {
+    f_nisp_environment_explode_stream(stream, &environment);
+    f_nisp_print_nodes_plain(STDOUT_FILENO, environment.root_code);
+    f_nisp_execute(&environment);
+    f_nisp_free(&environment);
     close(stream);
   }
   s_renderer renderer;

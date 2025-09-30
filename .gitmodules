@@ -1,0 +1,3 @@
+[submodule "coremio"]
+	path = coremio
+	url = https://github.com/nardinan/coremio
