@@ -20,14 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#define d_coremio_use_standard_malloc
 #include <time.h>
 #include <fcntl.h>
 #include "../../include/barfetto/terminator_listener.h"
 #include "../../include/barfetto/renderer.h"
 #include "../../include/barfetto/animation_pack.h"
 #include "../../include/barfetto/entity.h"
-#include <coremio/nisp.h>
+#include "../../include/barfetto/ui/ui_label.h"
+#include "../../include/barfetto/font_manager.h"
 const char *animations[] = {
   "down",
   "left",
@@ -54,21 +54,16 @@ void f_vertical_trigger_up(s_entity *self) {
   printf("Up up up\n");
 }
 int main(int argc, char *argv[]) {
-  s_nisp environment;
-  int stream;
-  if ((stream = open("code.nisp", O_RDONLY)) != -1) {
-    f_nisp_environment_explode_stream(stream, &environment);
-    f_nisp_print_nodes_plain(STDOUT_FILENO, environment.root_code);
-    f_nisp_execute(&environment);
-    f_nisp_free(&environment);
-    close(stream);
-  }
   s_renderer renderer;
+  s_font_manager font_manager;
   memset(&renderer, 0, sizeof(s_renderer));
   srand(time(NULL));
   s_animation_pack *animation_pack;
   f_renderer_initialize(&renderer, "BARF editor", 800, 600, 30);
   f_layer_append(f_renderer_get_layer(&renderer, 0), f_terminator_listener_malloc());
+  f_font_manager_initialize(&(font_manager), "./fonts");
+  f_layer_append(f_renderer_get_layer(&renderer, 0), f_ui_label_malloc(NULL, "Prova scrittura",
+    f_font_manager_get(&(font_manager), "opensans.ttf", 24), (s_point){10, 10}, (s_point){128, 32}, (s_color){0, 255, 100, 255}));
   if ((animation_pack = (s_animation_pack *)f_animation_pack_malloc(NULL, "gianmario.png", (s_point){(rand() % 700) + 50, (rand() % 500) + 50}, 128, 140, 50))) {
     f_color_set(&(animation_pack)->mask, (s_color){255, 255, 255, 255});
     ((s_image *)f_renderer_get_layer(&renderer, 0)->last)->angle = 180;
@@ -95,16 +90,12 @@ int main(int argc, char *argv[]) {
   }
   f_color_set(&(f_renderer_get_camera(&renderer, 0)->background_color), (s_color){ 255, 255, 255, 255 });
   f_renderer_get_camera(&renderer, 0)->show_contour = true;
-  f_renderer_get_camera(&renderer, 0)->screen_destination = (s_rectangle){(s_point){100, 100}, 600, 400};
+  f_renderer_get_camera(&renderer, 0)->screen_destination = (s_rectangle){(s_point){0, 0}, 800, 600};
   f_renderer_get_camera(&renderer, 0)->contour_color.blue = 255;
   f_renderer_get_camera(&renderer, 0)->contour_color.alpha = 255;
   f_renderer_launch(&renderer);
   f_dictionary_free(&dictionary_surface_cache);
-  if (animation_pack) {
-    if (animation_pack->head.head.head.f_barf_delete)
-      animation_pack->head.head.head.f_barf_delete((s_barf_object *)animation_pack);
-    d_free(animation_pack);
-  }
+  f_font_manager_delete(&font_manager);
   f_memory_print_plain();
   return 0;
 }

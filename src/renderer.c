@@ -20,6 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include <SDL_ttf.h>
 #include "../include/barfetto/renderer.h"
 d_result_define(SHIT_NO_SDL, 1, "Failure, cannot initialize SDL library");
 d_result_define(SHIT_NO_SDL_WINDOW, 2, "Failure, cannot initialize a SDL window");
@@ -30,7 +31,7 @@ coremio_result f_renderer_initialize(s_renderer *renderer, const char *title, si
   memset(renderer, 0, sizeof(s_renderer));
   if (((renderer->layers = (s_layer **)f_array_malloc(d_renderer_layer_bucket, sizeof(s_layer *)))) &&
       ((renderer->cameras = (s_camera **)f_array_malloc(d_renderer_camera_bucket, sizeof(s_camera *))))) {
-    /* TTF initialization */
+    TTF_Init();
     if (SDL_Init(SDL_INIT_VIDEO) >= 0) {
       SDL_StartTextInput();
       renderer->screen_width = screen_width;

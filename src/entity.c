@@ -62,6 +62,12 @@ static void p_entity_delete(s_entity *self) {
       d_free(node->status_key);
     d_free(node);
   }
+  if (self->renderable) {
+    if (self->renderable->f_barf_delete)
+      self->renderable->f_barf_delete(self->renderable);
+    d_free(self->renderable);
+    self->renderable = NULL;
+  }
 }
 s_barf_object *f_entity_malloc(s_entity *holder, s_barf_object *renderable, s_list_node **triggers) {
   s_entity *result = holder;

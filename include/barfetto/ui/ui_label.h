@@ -1,6 +1,6 @@
 /**
- * MIT License
- * Copyright (c) [2024] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
+* MIT License
+ * Copyright (c) [2026] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,26 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef MANAGED_ANIMATION_H
-#define MANAGED_ANIMATION_H
-#include "animation.h"
-typedef struct s_animation_pack_status_node {
-  s_dictionary_node head;
-  s_color mask;
-  unsigned int index_first_frame, index_last_frame, ticks_next_frame;
-  e_animation_behaviours behaviour;
-  float speed_x, speed_y;
-} s_animation_pack_status_node;
-typedef struct s_animation_pack {
-  s_animation head;
-  s_dictionary statuses;
-  s_color mask;
-  float speed_x, speed_y;
-  unsigned int ticks_next_frame, ticks_last;
-  l_barf_delete f_children_delete;
-} s_animation_pack;
-extern s_animation_pack_status_node *f_animation_pack_get_status(s_animation_pack *self, const char *status);
-extern s_barf_object *f_animation_pack_malloc(s_animation_pack *holder, const char *source, s_point destination, size_t width, size_t height,
-    unsigned int ticks_next_frame) __attribute__((unused));
-#endif /* MANAGED_ANIMATION_H */
-
+#ifndef UI_LABEL_H
+#define UI_LABEL_H
+#include <SDL_ttf.h>
+#include "ui_object.h"
+#include "../point.h"
+#include "../color.h"
+#define d_ui_label_size 64
+typedef struct s_ui_label {
+  s_ui_object head;
+  s_point destination, dimension;
+  s_color color;
+  TTF_Font *font;
+  char text[d_ui_label_size];
+} s_ui_label;
+extern s_barf_object *f_ui_label_malloc(s_ui_label *holder, const char *text, TTF_Font *font, s_point destination, s_point dimension, s_color color);
+extern void f_ui_label_update_text(s_ui_label *holder, const char *text);
+#endif //UI_LABEL_H

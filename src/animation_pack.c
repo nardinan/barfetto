@@ -57,6 +57,8 @@ static void p_animation_pack_status(s_animation_pack *self, const char *status) 
 }
 static void p_animation_pack_delete(s_animation_pack *self) {
   f_dictionary_free(&(self->statuses));
+  if (self->f_children_delete)
+    self->f_children_delete((s_barf_object *)self);
 }
 s_barf_object *f_animation_pack_malloc(s_animation_pack *holder, const char *source, s_point destination, size_t width, size_t height,
   unsigned int ticks_next_frame) {
@@ -69,6 +71,7 @@ s_barf_object *f_animation_pack_malloc(s_animation_pack *holder, const char *sou
       f_dictionary_initialize(&(result->statuses), sizeof(s_animation_pack_status_node));
       result->head.head.head.f_barf_render = (l_barf_render)p_animation_pack_render;
       result->head.head.head.f_barf_status = (l_barf_status)p_animation_pack_status;
+      result->f_children_delete = result->head.head.head.f_barf_delete;
       result->head.head.head.f_barf_delete = (l_barf_delete)p_animation_pack_delete;
     }
   }

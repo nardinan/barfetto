@@ -1,6 +1,6 @@
 /**
- * MIT License
- * Copyright (c) [2024] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
+* MIT License
+ * Copyright (c) [2026] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,26 +20,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef MANAGED_ANIMATION_H
-#define MANAGED_ANIMATION_H
-#include "animation.h"
-typedef struct s_animation_pack_status_node {
-  s_dictionary_node head;
-  s_color mask;
-  unsigned int index_first_frame, index_last_frame, ticks_next_frame;
-  e_animation_behaviours behaviour;
-  float speed_x, speed_y;
-} s_animation_pack_status_node;
-typedef struct s_animation_pack {
-  s_animation head;
-  s_dictionary statuses;
-  s_color mask;
-  float speed_x, speed_y;
-  unsigned int ticks_next_frame, ticks_last;
-  l_barf_delete f_children_delete;
-} s_animation_pack;
-extern s_animation_pack_status_node *f_animation_pack_get_status(s_animation_pack *self, const char *status);
-extern s_barf_object *f_animation_pack_malloc(s_animation_pack *holder, const char *source, s_point destination, size_t width, size_t height,
-    unsigned int ticks_next_frame) __attribute__((unused));
-#endif /* MANAGED_ANIMATION_H */
-
+#ifndef FONT_MANAGER_H
+#define FONT_MANAGER_H
+#include <coremio/dictionary.h>
+#include <SDL_ttf.h>
+#define d_font_family_pool_size 16
+typedef struct s_font_manager_family_font {
+ TTF_Font *ttf_font;
+ size_t size;
+} s_font_manager_family_font;
+typedef struct s_font_manager_family {
+ s_dictionary_node head;
+ s_font_manager_family_font fonts[d_font_family_pool_size];
+ size_t entries;
+} s_font_manager_family;
+typedef struct s_font_manager {
+  s_dictionary fonts;
+  const char *reference_base_path;
+} s_font_manager;
+extern void f_font_manager_initialize(s_font_manager *font_manager, const char *reference_base_path);
+extern void f_font_manager_delete(s_font_manager *font_manager);
+extern TTF_Font *f_font_manager_get(s_font_manager *font_manager, const char *name, size_t size);
+#endif //FONT_MANAGER_H
