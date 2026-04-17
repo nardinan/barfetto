@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
   f_layer_append(f_renderer_get_layer(&renderer, 0), f_terminator_listener_malloc());
   f_font_manager_initialize(&(font_manager), "./fonts");
   f_layer_append(f_renderer_get_layer(&renderer, 0), f_ui_label_malloc(NULL, "Prova scrittura",
-    f_font_manager_get(&(font_manager), "opensans.ttf", 24), (s_point){10, 10}, (s_point){128, 32}, (s_color){0, 255, 100, 255}));
+    f_font_manager_get(&(font_manager), "opensans.ttf", 24), (s_point){10, 10}, (s_rectangle){0, 0, 0, 0}, (s_color){0, 255, 100, 255}));
   if ((animation_pack = (s_animation_pack *)f_animation_pack_malloc(NULL, "gianmario.png", (s_point){(rand() % 700) + 50, (rand() % 500) + 50}, 128, 140, 50))) {
     f_color_set(&(animation_pack)->mask, (s_color){255, 255, 255, 255});
     ((s_image *)f_renderer_get_layer(&renderer, 0)->last)->angle = 180;

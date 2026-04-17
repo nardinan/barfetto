@@ -28,7 +28,5 @@ typedef struct s_ui_object {
   s_barf_object head;
   SDL_Surface *unoptimized_surface;
   SDL_Texture *texture;
-  double angle;
-  e_surface_flips flip;
 } s_ui_object;
 #endif //UI_OBJECT_H

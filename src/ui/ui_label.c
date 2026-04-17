@@ -29,19 +29,20 @@ static void p_ui_label_render(s_ui_label *self, struct s_renderer *renderer) {
       if ((!self->head.texture) && (self->head.unoptimized_surface))
         self->head.texture = SDL_CreateTextureFromSurface(renderer->renderer, self->head.unoptimized_surface);
       if (self->head.texture) {
-        if ((self->dimension.x == 0) &&
-          (self->dimension.y == 0)) {
-          self->dimension.x = self->head.unoptimized_surface->w;
-          self->dimension.y = self->head.unoptimized_surface->h;
-        }
         SDL_Rect destination = {
           .x = (self->destination.x - renderer->selected_camera->visible_area.origin.x),
           .y = (self->destination.y - renderer->selected_camera->visible_area.origin.y),
-          .w = self->dimension.x,
-          .h = self->dimension.y
-         };
-        SDL_RenderCopyEx(renderer->renderer, self->head.texture, NULL, &destination, self->head.angle,
-            NULL, (SDL_RendererFlip)self->head.flip);
+          .w = self->head.unoptimized_surface->w,
+          .h = self->head.unoptimized_surface->h
+        }, source = {
+          .x = self->source.origin.x,
+          .y = self->source.origin.y,
+          .w = self->source.width,
+          .h = self->source.height
+        }, *picked_source = &source;
+        if ((source.x == 0) && (source.y == 0) && (source.w == 0) && (source.h == 0))
+          picked_source = NULL;
+        SDL_RenderCopy(renderer->renderer, self->head.texture, picked_source, &destination);
       }
       }
   }
@@ -56,15 +57,15 @@ static void p_ui_label_delete(s_ui_label *self) {
     self->head.texture = NULL;
   }
 }
-s_barf_object *f_ui_label_malloc(s_ui_label *holder, const char *source, TTF_Font *font, s_point destination, s_point dimension, s_color color) {
+s_barf_object *f_ui_label_malloc(s_ui_label *holder, const char *text, TTF_Font *font, s_point destination, s_rectangle source, s_color color) {
   s_ui_label *result = holder;
   if ((result) || (result = (s_ui_label *)d_malloc(sizeof(s_ui_label)))) {
     memset(result, 0, sizeof(s_ui_label));
     result->destination = destination;
-    result->dimension = dimension;
+    result->source = source;
     result->color = color;
     result->font = font;
-    strncpy(result->text, source, (d_ui_label_size - 1));
+    strncpy(result->text, text, (d_ui_label_size - 1));
     result->head.head.f_barf_render = (l_barf_render)p_ui_label_render;
     result->head.head.f_barf_delete = (l_barf_delete)p_ui_label_delete;
   }

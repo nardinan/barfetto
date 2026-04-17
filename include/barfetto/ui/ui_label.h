@@ -29,11 +29,12 @@
 #define d_ui_label_size 64
 typedef struct s_ui_label {
   s_ui_object head;
-  s_point destination, dimension;
+  s_point destination;
+  s_rectangle source;
   s_color color;
   TTF_Font *font;
   char text[d_ui_label_size];
 } s_ui_label;
-extern s_barf_object *f_ui_label_malloc(s_ui_label *holder, const char *text, TTF_Font *font, s_point destination, s_point dimension, s_color color);
+extern s_barf_object *f_ui_label_malloc(s_ui_label *holder, const char *text, TTF_Font *font, s_point destination, s_rectangle source, s_color color);
 extern void f_ui_label_update_text(s_ui_label *holder, const char *text);
 #endif //UI_LABEL_H
