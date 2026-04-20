@@ -26,6 +26,8 @@ add_executable(barfetto
         src/ui/ui_label.c
         src/font_manager.c
         include/barfetto/font_manager.h
+        include/barfetto/time_manager.h
+        src/time_manager.c
 )
 add_subdirectory(coremio)
 
