@@ -23,58 +23,63 @@
 #include "../../include/barfetto/ui/ui_label.h"
 #include "../../include/barfetto/renderer.h"
 static void p_ui_label_render(s_ui_label *self, struct s_renderer *renderer) {
-  if (self->font) {
-    if ((self->head.unoptimized_surface) || (self->head.unoptimized_surface = TTF_RenderText_Solid(self->font, self->text,
+  if (self->reference_font) {
+    if ((self->head.unoptimized_surface) || (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font, self->text,
       (SDL_Color){self->color.red, self->color.green, self->color.blue, self->color.alpha}))) {
       if ((!self->head.texture) && (self->head.unoptimized_surface))
         self->head.texture = SDL_CreateTextureFromSurface(renderer->renderer, self->head.unoptimized_surface);
       if (self->head.texture) {
+        int picked_width, picked_height;
+        if ((self->visible_area.width == 0) &&
+          (self->visible_area.height == 0)) {
+          picked_width = (self->head.unoptimized_surface->w - self->visible_area.origin.x);
+          picked_height = (self->head.unoptimized_surface->h - self->visible_area.origin.y);
+          } else {
+            /* we need to pick the smallest number between the texture size and the visible area: this is going to be our width
+             * for both source and height */
+            picked_width = ((self->head.unoptimized_surface->w - self->visible_area.origin.x) > self->visible_area.width) ? self->visible_area.width :
+            (self->head.unoptimized_surface->w - self->visible_area.origin.x);
+            picked_height = ((self->head.unoptimized_surface->h - self->visible_area.origin.y) > self->visible_area.height) ? self->visible_area.height :
+            (self->head.unoptimized_surface->h - self->visible_area.origin.y);
+          }
         SDL_Rect destination = {
           .x = (self->destination.x - renderer->selected_camera->visible_area.origin.x),
           .y = (self->destination.y - renderer->selected_camera->visible_area.origin.y),
-          .w = self->head.unoptimized_surface->w,
-          .h = self->head.unoptimized_surface->h
+          .w = picked_width,
+          .h = picked_height
         }, source = {
-          .x = self->source.origin.x,
-          .y = self->source.origin.y,
-          .w = self->source.width,
-          .h = self->source.height
-        }, *picked_source = &source;
-        if ((source.x == 0) && (source.y == 0) && (source.w == 0) && (source.h == 0))
-          picked_source = NULL;
-        SDL_RenderCopy(renderer->renderer, self->head.texture, picked_source, &destination);
+          .x = self->visible_area.origin.x,
+          .y = self->visible_area.origin.y,
+          .w = picked_width,
+          .h = picked_height
+        };
+        SDL_RenderCopy(renderer->renderer, self->head.texture, &source, &destination);
       }
       }
   }
 }
 static void p_ui_label_delete(s_ui_label *self) {
-  if (self->head.unoptimized_surface) {
+  if (self->head.unoptimized_surface)
     SDL_FreeSurface(self->head.unoptimized_surface);
-    self->head.unoptimized_surface = NULL;
-  }
-  if (self->head.texture) {
+  if (self->head.texture)
     SDL_DestroyTexture(self->head.texture);
-    self->head.texture = NULL;
-  }
+  self->head.unoptimized_surface = NULL;
+  self->head.texture = NULL;
 }
-s_barf_object *f_ui_label_malloc(s_ui_label *holder, const char *text, TTF_Font *font, s_point destination, s_rectangle source, s_color color) {
+s_barf_object *f_ui_label_malloc(s_ui_label *holder, const char *text, TTF_Font *reference_font, s_point destination) {
   s_ui_label *result = holder;
   if ((result) || (result = (s_ui_label *)d_malloc(sizeof(s_ui_label)))) {
     memset(result, 0, sizeof(s_ui_label));
     result->destination = destination;
-    result->source = source;
-    result->color = color;
-    result->font = font;
-    strncpy(result->text, text, (d_ui_label_size - 1));
+    result->reference_font = reference_font;
+    if (text)
+      strncpy(result->text, text, (d_ui_label_size - 1));
     result->head.head.f_barf_render = (l_barf_render)p_ui_label_render;
     result->head.head.f_barf_delete = (l_barf_delete)p_ui_label_delete;
   }
   return (s_barf_object *)result;
 }
-void f_ui_label_update_text(s_ui_label *self, const char *text) {
-  memset(self->text, 0, d_ui_label_size);
-  strncpy(self->text, text, (d_ui_label_size - 1));
-  /* we need to clean everything, so it will be re-generated during the next update */
+void f_ui_label_force_refresh(s_ui_label *self) {
   if (self->head.unoptimized_surface) {
     SDL_FreeSurface(self->head.unoptimized_surface);
     self->head.unoptimized_surface = NULL;
@@ -83,4 +88,29 @@ void f_ui_label_update_text(s_ui_label *self, const char *text) {
     SDL_DestroyTexture(self->head.texture);
     self->head.texture = NULL;
   }
+}
+void f_ui_label_update(s_ui_label *self, const char *text) {
+  memset(self->text, 0, d_ui_label_size);
+  strncpy(self->text, text, (d_ui_label_size - 1));
+  f_ui_label_force_refresh(self);
+}
+float f_ui_label_get_width_content(s_ui_label *self) {
+  float width = 0;
+  if (self->reference_font) {
+    if ((self->head.unoptimized_surface) || (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font, self->text,
+      (SDL_Color){self->color.red, self->color.green, self->color.blue, self->color.alpha}))) {
+      width = self->head.unoptimized_surface->w;
+    }
+  }
+  return width;
+}
+float f_ui_label_get_height_content(s_ui_label *self) {
+  float height = 0;
+  if (self->reference_font) {
+    if ((self->head.unoptimized_surface) || (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font, self->text,
+      (SDL_Color){self->color.red, self->color.green, self->color.blue, self->color.alpha}))) {
+      height = self->head.unoptimized_surface->h;
+    }
+  }
+  return height;
 }

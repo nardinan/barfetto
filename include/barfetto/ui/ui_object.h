@@ -24,9 +24,13 @@
 #define UI_OBJECT_H
 #include "../barf_object.h"
 #include "../image.h"
+#define d_ui_object_default_background (s_color){180, 180, 180, 255}
+#define d_ui_object_default_border (s_color){24, 24, 24, 255}
+#define d_ui_object_default_cursor (s_color){180, 24, 24, 255}
 typedef struct s_ui_object {
   s_barf_object head;
   SDL_Surface *unoptimized_surface;
   SDL_Texture *texture;
+  bool active;
 } s_ui_object;
 #endif //UI_OBJECT_H

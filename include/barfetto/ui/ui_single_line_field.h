@@ -1,6 +1,6 @@
 /**
- * MIT License
- * Copyright (c) [2024] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
+* MIT License
+ * Copyright (c) [2026] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CAMERA_H
-#define CAMERA_H
-#include "barf_object.h"
-#include "rectangle.h"
-#include "color.h"
-typedef struct s_camera {
-  s_barf_object head;
-  s_rectangle visible_area, screen_destination;
-  s_color background_color, contour_color;
-  size_t _last_width, _last_height;
-  SDL_Texture *container;
-  bool visible, show_contour;
-} s_camera;
-extern s_barf_object *f_camera_malloc(s_camera *holder, s_rectangle visible_area, s_rectangle screen_destination) __attribute__((unused));
-extern void f_camera_enable_rendering(s_camera *self, struct s_renderer *renderer);
-extern void f_camera_disable_rendering(s_camera *self, struct s_renderer *renderer);
-extern int f_camera_get_mouse_position(s_camera *self, int *mouse_x, int *mouse_y);
-#endif /* CAMERA_H */
-
+#ifndef UI_SINGLE_LINE_FIELD_H
+#define UI_SINGLE_LINE_FIELD_H
+#include "ui_label.h"
+#include "../time_manager.h"
+#define d_ui_single_line_field_container_extra_space_pixels 2
+typedef struct s_ui_single_line_field {
+  s_ui_label head;
+  s_rectangle position;
+  s_color background_color, border_color, cursor_color;
+  bool cursor_draw, border_draw, background_draw, editable;
+  size_t cursor_position;
+  s_time_manager_clock *reference_clock;
+  l_barf_render f_children_render;
+  l_barf_delete f_children_delete;
+} s_ui_single_line_field;
+extern s_barf_object *f_ui_single_line_field_malloc(s_ui_single_line_field *holder, s_time_manager_clock *reference_clock, const char *text,
+  TTF_Font *reference_font, s_rectangle position) __attribute__((unused));
+#endif //UI_SINGLE_LINE_FIELD_H

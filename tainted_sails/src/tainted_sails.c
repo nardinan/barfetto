@@ -28,6 +28,7 @@
 #include "../../include/barfetto/entity.h"
 #include "../../include/barfetto/ui/ui_label.h"
 #include "../../include/barfetto/font_manager.h"
+#include "../../include/barfetto/ui/ui_single_line_field.h"
 const char *animations[] = {
   "down",
   "left",
@@ -56,14 +57,17 @@ void f_vertical_trigger_up(s_entity *self) {
 int main(int argc, char *argv[]) {
   s_renderer renderer;
   s_font_manager font_manager;
+  s_time_manager time_manager;
   memset(&renderer, 0, sizeof(s_renderer));
   srand(time(NULL));
   s_animation_pack *animation_pack;
   f_renderer_initialize(&renderer, "BARF editor", 800, 600, 30);
   f_layer_append(f_renderer_get_layer(&renderer, 0), f_terminator_listener_malloc());
   f_font_manager_initialize(&(font_manager), "./fonts");
-  f_layer_append(f_renderer_get_layer(&renderer, 0), f_ui_label_malloc(NULL, "Prova scrittura",
-    f_font_manager_get(&(font_manager), "opensans.ttf", 24), (s_point){10, 10}, (s_rectangle){0, 0, 0, 0}, (s_color){0, 255, 100, 255}));
+  f_time_manager_initialize(&(time_manager));
+  f_layer_append(f_renderer_get_layer(&renderer, 0), f_ui_single_line_field_malloc(NULL,
+    f_time_manager_get_clock(&(time_manager), "ui", "ui"), "Prova scrittura",
+    f_font_manager_get(&(font_manager), "opensans.ttf", 24), (s_rectangle){10, 10, 100, 40}));
   if ((animation_pack = (s_animation_pack *)f_animation_pack_malloc(NULL, "gianmario.png", (s_point){(rand() % 700) + 50, (rand() % 500) + 50}, 128, 140, 50))) {
     f_color_set(&(animation_pack)->mask, (s_color){255, 255, 255, 255});
     ((s_image *)f_renderer_get_layer(&renderer, 0)->last)->angle = 180;
@@ -95,6 +99,7 @@ int main(int argc, char *argv[]) {
   f_renderer_get_camera(&renderer, 0)->contour_color.alpha = 255;
   f_renderer_launch(&renderer);
   f_dictionary_free(&dictionary_surface_cache);
+  f_time_manager_delete(&time_manager);
   f_font_manager_delete(&font_manager);
   f_memory_print_plain();
   return 0;
