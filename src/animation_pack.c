@@ -37,7 +37,8 @@ static void p_animation_pack_render(s_animation_pack *self, struct s_renderer *r
   self->head.head.destination.x += displacement_x;
   self->head.head.destination.y += displacement_y;
   self->ticks_last = now_ticks;
-  p_animation_render(&(self->head), renderer);
+  if (self->f_children_render)
+    self->f_children_render((s_barf_object *)&(self->head), renderer);
 }
 static void p_animation_pack_status(s_animation_pack *self, const char *status) {
   s_animation_pack_status_node *current_status = (s_animation_pack_status_node *)f_animation_pack_get_status(self, status);
@@ -66,12 +67,13 @@ s_barf_object *f_animation_pack_malloc(s_animation_pack *holder, const char *sou
   if ((result) || (result = (s_animation_pack *)d_malloc(sizeof(s_animation_pack)))) {
     memset(result, 0, sizeof(s_animation_pack));
     if ((result = (s_animation_pack *)f_animation_malloc((s_animation *)result, source, destination, width, height, ticks_next_frame))) {
+      result->f_children_render = result->head.head.head.f_barf_render;
+      result->f_children_delete = result->head.head.head.f_barf_delete;
       result->ticks_next_frame = ticks_next_frame;
       result->head.behaviour = e_animation_behaviour_hidden;
       f_dictionary_initialize(&(result->statuses), sizeof(s_animation_pack_status_node));
       result->head.head.head.f_barf_render = (l_barf_render)p_animation_pack_render;
       result->head.head.head.f_barf_status = (l_barf_status)p_animation_pack_status;
-      result->f_children_delete = result->head.head.head.f_barf_delete;
       result->head.head.head.f_barf_delete = (l_barf_delete)p_animation_pack_delete;
     }
   }

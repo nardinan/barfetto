@@ -36,6 +36,7 @@ typedef struct s_animation_pack {
   s_color mask;
   float speed_x, speed_y;
   unsigned int ticks_next_frame, ticks_last;
+  l_barf_render f_children_render;
   l_barf_delete f_children_delete;
 } s_animation_pack;
 extern s_animation_pack_status_node *f_animation_pack_get_status(s_animation_pack *self, const char *status);

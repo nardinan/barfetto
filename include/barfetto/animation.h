@@ -40,8 +40,8 @@ typedef struct s_animation {
   e_animation_behaviours behaviour;
   size_t grid_x, grid_y, index;
   unsigned int ticks_next_frame, ticks_last, index_first_frame, index_last_frame;
+  l_barf_render f_children_render;
 } s_animation;
-extern void p_animation_render(s_animation *self, struct s_renderer *renderer);
 extern s_barf_object *f_animation_malloc(s_animation *holder, const char *source, s_point destination, size_t width, size_t height,
     unsigned int ticks_next_frame) __attribute__((unused));
 #endif /* ANIMATION_H */

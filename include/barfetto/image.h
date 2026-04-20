@@ -50,7 +50,6 @@ typedef struct s_image {
   double angle;
   e_surface_flips flip;
 } s_image;
-extern void p_image_render(s_image *self, struct s_renderer *renderer);
 extern s_barf_object *f_image_malloc(s_image *holder, const char *source, s_point destination) __attribute__((unused));
 #endif /* IMAGE_H */
 

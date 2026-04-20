@@ -22,7 +22,7 @@
  */
 #include "../include/barfetto/animation.h"
 #include "../include/barfetto/renderer.h"
-void p_animation_render(s_animation *self, s_renderer *renderer) {
+static void p_animation_render(s_animation *self, s_renderer *renderer) {
   if (self->behaviour != e_animation_behaviour_hidden) {
     unsigned int now_ticks = SDL_GetTicks(), elapsed;
     if ((elapsed = (now_ticks - self->ticks_last)) > self->ticks_next_frame) {
@@ -55,7 +55,8 @@ void p_animation_render(s_animation *self, s_renderer *renderer) {
       self->ticks_last = now_ticks - residual;
     }
     self->head.source = self->selected_frame;
-    p_image_render(&(self->head), renderer);
+    if (self->f_children_render)
+      self->f_children_render((s_barf_object *)&(self->head), renderer);
   }
 }
 s_barf_object *f_animation_malloc(s_animation *holder, const char *source, s_point destination, size_t width, size_t height, unsigned int ticks_next_frame) {
@@ -63,6 +64,7 @@ s_barf_object *f_animation_malloc(s_animation *holder, const char *source, s_poi
   if ((result) || (result = (s_animation *)d_malloc(sizeof(s_animation)))) {
     memset(result, 0, sizeof(s_animation));
     if ((result = (s_animation *)f_image_malloc((s_image *)result, source, destination))) {
+      result->f_children_render = result->head.head.f_barf_render;
       result->selected_frame.width = width;
       result->selected_frame.height = height;
       result->grid_x = (result->head.source.width / width);
