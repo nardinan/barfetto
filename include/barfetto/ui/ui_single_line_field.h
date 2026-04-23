@@ -35,6 +35,6 @@ typedef struct s_ui_single_line_field {
   l_barf_render f_children_render;
   l_barf_delete f_children_delete;
 } s_ui_single_line_field;
-extern s_barf_object *f_ui_single_line_field_malloc(s_ui_single_line_field *holder, s_time_manager_clock *reference_clock, const char *text,
+extern s_barf_object *f_ui_single_line_field_malloc(s_ui_single_line_field *holder, s_time_manager_clock *reference_clock, const char *content,
   TTF_Font *reference_font, s_rectangle position) __attribute__((unused));
 #endif //UI_SINGLE_LINE_FIELD_H

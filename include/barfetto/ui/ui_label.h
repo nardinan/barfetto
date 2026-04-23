@@ -26,18 +26,19 @@
 #include "ui_object.h"
 #include "../point.h"
 #include "../color.h"
-#define d_ui_label_size 64
 typedef struct s_ui_label {
   s_ui_object head;
   s_point destination;
   s_rectangle visible_area;
   s_color color;
   TTF_Font *reference_font;
-  char text[d_ui_label_size];
+  size_t allocated_space;
+  char *content;
 } s_ui_label;
-extern s_barf_object *f_ui_label_malloc(s_ui_label *holder, const char *text, TTF_Font *reference_font, s_point destination) __attribute__((unused));
+#define d_ui_label_get_printable_content(l) ((((l)->content) ? (l)->content : ""))
+extern s_barf_object *f_ui_label_malloc(s_ui_label *holder, const char *content, TTF_Font *reference_font, s_point destination) __attribute__((unused));
 extern void f_ui_label_force_refresh(s_ui_label *self);
-extern void f_ui_label_update_text(s_ui_label *self, const char *text);
+extern void f_ui_label_update_text(s_ui_label *self, const char *content);
 extern float f_ui_label_get_width_content(s_ui_label *self);
 extern float f_ui_label_get_height_content(s_ui_label *self);
 #endif //UI_LABEL_H

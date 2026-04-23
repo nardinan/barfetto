@@ -23,21 +23,21 @@
 #include "../../include/barfetto/ui/ui_single_line_field.h"
 #include "../../include/barfetto/renderer.h"
 static size_t p_ui_single_line_get_cursor_position_in_text(s_ui_single_line_field *self) {
-  const size_t length_label = strlen(self->head.text);
+  const size_t length_label = strlen(d_ui_label_get_printable_content(&(self->head)));
   if (self->cursor_position > length_label)
     self->cursor_position = length_label;
   return self->cursor_position;
 }
 static int p_ui_single_line_get_cursor_position_in_pixels(s_ui_single_line_field *self) {
-  const size_t cursor_position = p_ui_single_line_get_cursor_position_in_text(self), length_label = strlen(self->head.text);
+  const size_t cursor_position = p_ui_single_line_get_cursor_position_in_text(self), length_label = strlen(d_ui_label_get_printable_content(&(self->head)));
   int position_x = 0;
   if ((length_label > 0) && (cursor_position > 0)) {
     if (cursor_position < length_label) {
-      char backup_character = self->head.text[cursor_position];
+      char backup_character = self->head.content[cursor_position];
       int position_height;
-      self->head.text[cursor_position] = 0; /* truncate in-place, without substring */
-      TTF_SizeText(self->head.reference_font, self->head.text, &(position_x), &(position_height));
-      self->head.text[cursor_position] = backup_character;
+      self->head.content[cursor_position] = 0; /* truncate in-place, without substring */
+      TTF_SizeText(self->head.reference_font, self->head.content, &(position_x), &(position_height));
+      self->head.content[cursor_position] = backup_character;
     } else
       position_x = (int)f_ui_label_get_width_content(&(self->head));
   }
@@ -93,18 +93,32 @@ static void p_ui_single_line_field_listen(s_ui_single_line_field *self, struct s
   }
   if (self->head.head.active)
   if (event) {
-    if (event->type == SDL_KEYDOWN) {
+    if (event->type == SDL_TEXTEDITING) {
+    } else if (event->type == SDL_KEYDOWN) {
       switch (event->key.keysym.sym) {
         case SDLK_RIGHT: {
           ++(self->cursor_position);
           break;
         }
         case SDLK_LEFT: {
-          --(self->cursor_position);
+          if (self->cursor_position > 0)
+            --(self->cursor_position);
+          break;
+        }
+        case SDLK_BACKSPACE: {
+          const size_t length_text = strlen(d_ui_label_get_printable_content(&(self->head)));
+          if (length_text > 0)
+            if (self->cursor_position > 0) {
+              memmove((self->head.content + self->cursor_position - 1),
+                (self->head.content + self->cursor_position), strlen(self->head.content + self->cursor_position));
+              self->head.content[length_text - 1] = 0;
+              f_ui_label_force_refresh(&(self->head));
+              --(self->cursor_position);
+            }
           break;
         }
         default: {
-
+          break;
         }
       }
     }
@@ -114,12 +128,12 @@ static void p_ui_single_line_field_delete(s_ui_single_line_field *self) {
   if (self->f_children_delete)
     self->f_children_delete((s_barf_object *)self);
 }
-s_barf_object *f_ui_single_line_field_malloc(s_ui_single_line_field *holder, s_time_manager_clock *reference_clock, const char *text, TTF_Font *reference_font,
-  s_rectangle position) {
+s_barf_object *f_ui_single_line_field_malloc(s_ui_single_line_field *holder, s_time_manager_clock *reference_clock, const char *content,
+  TTF_Font *reference_font, s_rectangle position) {
   s_ui_single_line_field *result = holder;
   if ((result) || (result = (s_ui_single_line_field *)d_malloc(sizeof(s_ui_single_line_field)))) {
     memset(result, 0, sizeof(s_ui_single_line_field));
-    if ((result = (s_ui_single_line_field *)f_ui_label_malloc((s_ui_label *)result, text, reference_font, position.origin))) {
+    if ((result = (s_ui_single_line_field *)f_ui_label_malloc((s_ui_label *)result, content, reference_font, position.origin))) {
       result->f_children_render = result->head.head.head.f_barf_render;
       result->f_children_delete = result->head.head.head.f_barf_delete;
       result->position = position;
@@ -127,8 +141,8 @@ s_barf_object *f_ui_single_line_field_malloc(s_ui_single_line_field *holder, s_t
       result->background_color = d_ui_object_default_background;
       result->border_color = d_ui_object_default_border;
       result->cursor_color = d_ui_object_default_cursor;
-      if (text)
-        result->cursor_position = strlen(text);
+      if (content)
+        result->cursor_position = strlen(content);
       result->background_draw = true;
       result->border_draw = true;
       result->cursor_draw = true;

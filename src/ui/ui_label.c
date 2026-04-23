@@ -24,8 +24,8 @@
 #include "../../include/barfetto/renderer.h"
 static void p_ui_label_render(s_ui_label *self, struct s_renderer *renderer) {
   if (self->reference_font) {
-    if ((self->head.unoptimized_surface) || (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font, self->text,
-      (SDL_Color){self->color.red, self->color.green, self->color.blue, self->color.alpha}))) {
+    if ((self->head.unoptimized_surface) || (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font,
+      ((self->content) ? self->content : ""), (SDL_Color){self->color.red, self->color.green, self->color.blue, self->color.alpha}))) {
       if ((!self->head.texture) && (self->head.unoptimized_surface))
         self->head.texture = SDL_CreateTextureFromSurface(renderer->renderer, self->head.unoptimized_surface);
       if (self->head.texture) {
@@ -59,6 +59,10 @@ static void p_ui_label_render(s_ui_label *self, struct s_renderer *renderer) {
   }
 }
 static void p_ui_label_delete(s_ui_label *self) {
+  if (self->content) {
+    d_free(self->content);
+    self->content = NULL;
+  }
   if (self->head.unoptimized_surface)
     SDL_FreeSurface(self->head.unoptimized_surface);
   if (self->head.texture)
@@ -66,14 +70,13 @@ static void p_ui_label_delete(s_ui_label *self) {
   self->head.unoptimized_surface = NULL;
   self->head.texture = NULL;
 }
-s_barf_object *f_ui_label_malloc(s_ui_label *holder, const char *text, TTF_Font *reference_font, s_point destination) {
+s_barf_object *f_ui_label_malloc(s_ui_label *holder, const char *content, TTF_Font *reference_font, s_point destination) {
   s_ui_label *result = holder;
   if ((result) || (result = (s_ui_label *)d_malloc(sizeof(s_ui_label)))) {
     memset(result, 0, sizeof(s_ui_label));
     result->destination = destination;
     result->reference_font = reference_font;
-    if (text)
-      strncpy(result->text, text, (d_ui_label_size - 1));
+    f_ui_label_update_text(result, content);
     result->head.head.f_barf_render = (l_barf_render)p_ui_label_render;
     result->head.head.f_barf_delete = (l_barf_delete)p_ui_label_delete;
   }
@@ -89,16 +92,25 @@ void f_ui_label_force_refresh(s_ui_label *self) {
     self->head.texture = NULL;
   }
 }
-void f_ui_label_update(s_ui_label *self, const char *text) {
-  memset(self->text, 0, d_ui_label_size);
-  strncpy(self->text, text, (d_ui_label_size - 1));
+void f_ui_label_update_text(s_ui_label *self, const char *content) {
+  if (content) {
+    size_t length_content = strlen(content);
+    if (self->allocated_space < (length_content + 1))
+      if ((self->content = d_realloc(self->content, (length_content + 1))))
+        self->allocated_space = (length_content + 1);
+    if (self->content) {
+      memset(self->content, 0, (length_content + 1));
+      strncpy(self->content, content, length_content);
+    }
+  } else if (self->content)
+    self->content[0] = 0;
   f_ui_label_force_refresh(self);
 }
 float f_ui_label_get_width_content(s_ui_label *self) {
   float width = 0;
   if (self->reference_font) {
-    if ((self->head.unoptimized_surface) || (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font, self->text,
-      (SDL_Color){self->color.red, self->color.green, self->color.blue, self->color.alpha}))) {
+    if ((self->head.unoptimized_surface) || (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font,
+      d_ui_label_get_printable_content(self), (SDL_Color){self->color.red, self->color.green, self->color.blue, self->color.alpha}))) {
       width = self->head.unoptimized_surface->w;
     }
   }
@@ -107,8 +119,8 @@ float f_ui_label_get_width_content(s_ui_label *self) {
 float f_ui_label_get_height_content(s_ui_label *self) {
   float height = 0;
   if (self->reference_font) {
-    if ((self->head.unoptimized_surface) || (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font, self->text,
-      (SDL_Color){self->color.red, self->color.green, self->color.blue, self->color.alpha}))) {
+    if ((self->head.unoptimized_surface) || (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font,
+      d_ui_label_get_printable_content(self), (SDL_Color){self->color.red, self->color.green, self->color.blue, self->color.alpha}))) {
       height = self->head.unoptimized_surface->h;
     }
   }
