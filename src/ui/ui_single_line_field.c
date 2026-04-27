@@ -93,11 +93,28 @@ static void p_ui_single_line_field_listen(s_ui_single_line_field *self, struct s
   }
   if (self->head.head.active)
   if (event) {
-    if (event->type == SDL_TEXTEDITING) {
+    if (event->type == SDL_TEXTINPUT) {
+      size_t length_additional_content = strlen(event->text.text), length_current_content = strlen(d_ui_label_get_printable_content(&(self->head))),
+      length_final_content = length_additional_content + length_current_content + 1;
+      if (length_additional_content > 0) {
+        char stack_buffer[length_final_content];
+        if (self->cursor_position > length_current_content)
+          self->cursor_position = length_current_content;
+        if (self->cursor_position > 0) /* we have a block of text before the cursor */
+          strncpy(&(stack_buffer[0]), self->head.content, self->cursor_position);
+        strcpy(&(stack_buffer[self->cursor_position]), event->text.text);
+        if (self->cursor_position < length_current_content) /* we have a block of text at the right of the cursor that should scoot */
+          strcpy(&(stack_buffer[self->cursor_position + length_additional_content]), &(self->head.content[self->cursor_position]));
+        stack_buffer[length_final_content - 1] = 0;
+        self->cursor_position += length_additional_content;
+        f_ui_label_update_text(&(self->head), stack_buffer);
+      }
     } else if (event->type == SDL_KEYDOWN) {
       switch (event->key.keysym.sym) {
         case SDLK_RIGHT: {
-          ++(self->cursor_position);
+          const size_t length_text = strlen(d_ui_label_get_printable_content(&(self->head)));
+          if (self->cursor_position < length_text)
+            ++(self->cursor_position);
           break;
         }
         case SDLK_LEFT: {

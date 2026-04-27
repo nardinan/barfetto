@@ -101,3 +101,9 @@ s_entity_trigger *f_entity_new_trigger_change_status(const char *status_key, l_b
   }
   return result;
 }
+bool f_entity_verify_collision(s_entity *self, s_entity *other) {
+  bool collision = false;
+  if ((self->collision_box.width > 0) && (self->collision_box.height > 0) && (other->collision_box.width > 0) && (other->collision_box.height > 0))
+    collision = f_rectangle_overlaps(self->collision_box, other->collision_box);
+  return collision;
+}

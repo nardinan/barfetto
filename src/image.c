@@ -23,7 +23,7 @@
 #include "../include/barfetto/image.h"
 #include "../include/barfetto/renderer.h"
 s_dictionary dictionary_surface_cache;
-void p_image_render(s_image *self, struct s_renderer *renderer) {
+static void p_image_render(s_image *self, struct s_renderer *renderer) {
   if (self->texture) {
     if ((!self->texture->texture) && (self->texture->unoptimized_surface))
       self->texture->texture = SDL_CreateTextureFromSurface(renderer->renderer, self->texture->unoptimized_surface);
