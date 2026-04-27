@@ -27,3 +27,20 @@ void f_color_set(s_color *destination, s_color source) {
   destination->blue = source.blue;
   destination->alpha = source.alpha;
 }
+static s_color p_color_json_unserialize(s_json *json, s_json_node *node) {
+  s_color result = {0, 0, 0, 255};
+  if ((json) && (node) && (node->type == e_json_type_array)) {
+    result.red = f_json_get_value(json, node, "d", (long)0);
+    result.green = f_json_get_value(json, node, "d", (long)1);
+    result.blue = f_json_get_value(json, node, "d", (long)2);
+    result.alpha = f_json_get_value(json, node, "d", (long)3);
+  }
+  return result;
+}
+s_color f_color_json_get(s_json *json, s_json_node *parent, const char *key, const s_color default_value) {
+  s_color result = default_value;
+  s_json_node *node;
+  if ((json) && (parent) && (key) && ((node = f_json_get_node(json, parent, "s", (char *)key))))
+    result = p_color_json_unserialize(json, node);
+  return result;
+}

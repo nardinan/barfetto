@@ -25,10 +25,9 @@
 #include "point.h"
 typedef struct s_rectangle {
   s_point origin;
-  size_t width, height;
+  float width, height;
 } s_rectangle;
-extern s_rectangle f_rectangle_unserialize(s_json *json, s_json_node *node);
-extern s_rectangle f_rectangle_get(s_json *json, s_json_node *parent, const char *key, const s_rectangle default_value);
+extern s_rectangle f_rectangle_json_get(s_json *json, s_json_node *parent, const char *key, const s_rectangle default_value);
 extern bool f_rectangle_overlaps(const s_rectangle left, const s_rectangle right);
 extern bool f_rectangle_touches(const s_rectangle left, const s_rectangle right);
 extern bool f_rectangle_contains_point(const s_rectangle rectangle, const s_point point);

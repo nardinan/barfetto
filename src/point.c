@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 #include "../include/barfetto/point.h"
-s_point f_point_unserialize(s_json *json, s_json_node *node) {
+static s_point p_point_json_unserialize(s_json *json, s_json_node *node) {
   s_point result = {0.0, 0.0};
   if ((json) && (node) && (node->type == e_json_type_array)) {
     result.x = f_json_get_value(json, node, "d", (long)0);
@@ -29,10 +29,10 @@ s_point f_point_unserialize(s_json *json, s_json_node *node) {
   }
   return result;
 }
-s_point f_point_get(s_json *json, s_json_node *parent, const char *key, const s_point default_value) {
+s_point f_point_json_get(s_json *json, s_json_node *parent, const char *key, const s_point default_value) {
   s_point result = default_value;
   s_json_node *node;
   if ((json) && (parent) && (key) && ((node = f_json_get_node(json, parent, "s", (char *)key))))
-    result = f_point_unserialize(json, node);
+    result = p_point_json_unserialize(json, node);
   return result;
 }

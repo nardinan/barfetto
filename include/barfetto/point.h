@@ -26,7 +26,6 @@
 typedef struct s_point {
   float x, y;
 } s_point;
-extern s_point f_point_unserialize(s_json *json, s_json_node *node);
-extern s_point f_point_get(s_json *json, s_json_node *parent, const char *key, const s_point default_value);
+extern s_point f_point_json_get(s_json *json, s_json_node *parent, const char *key, const s_point default_value);
 #endif /* POINT_H */
 

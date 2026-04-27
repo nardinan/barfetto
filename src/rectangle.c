@@ -21,35 +21,26 @@
  * SOFTWARE.
  */
 #include "../include/barfetto/rectangle.h"
-static double p_rectangle_value(s_json *json, s_json_node *node, const char *key, const double default_value) {
-  double result = default_value;
-  s_json_node *value_node;
-  if ((value_node = f_json_get_node(json, node, "s", (char *)key)))
-    if (value_node->type == e_json_type_value)
-      result = f_json_get_value(json, node, "s", (char *)key);
-  return result;
-}
 static float p_rectangle_min(const float left, const float right) {
   return ((left < right) ? left : right);
 }
 static float p_rectangle_max(const float left, const float right) {
   return ((left > right) ? left : right);
 }
-s_rectangle f_rectangle_unserialize(s_json *json, s_json_node *node) {
-  s_rectangle result = {{0.0, 0.0}, 0, 0};
+static s_rectangle p_rectangle_json_unserialize(s_json *json, s_json_node *node) {
+  s_rectangle result = { {0, 0}, 0, 0 };
   if ((json) && (node)) {
-    result.origin.x = p_rectangle_value(json, node, "x", 0.0);
-    result.origin.y = p_rectangle_value(json, node, "y", 0.0);
-    result.width = p_rectangle_value(json, node, "width", p_rectangle_value(json, node, "w", 0.0));
-    result.height = p_rectangle_value(json, node, "height", p_rectangle_value(json, node, "h", 0.0));
+    result.origin = f_point_json_get(json, node, "origin", (s_point){0, 0});
+    result.width = f_json_get_value(json, node, "s", "w");
+    result.height = f_json_get_value(json, node, "s", "h");
   }
   return result;
 }
-s_rectangle f_rectangle_get(s_json *json, s_json_node *parent, const char *key, const s_rectangle default_value) {
+s_rectangle f_rectangle_json_get(s_json *json, s_json_node *parent, const char *key, const s_rectangle default_value) {
   s_rectangle result = default_value;
   s_json_node *node;
   if ((json) && (parent) && (key) && ((node = f_json_get_node(json, parent, "s", (char *)key))))
-    result = f_rectangle_unserialize(json, node);
+    result = p_rectangle_json_unserialize(json, node);
   return result;
 }
 bool f_rectangle_overlaps(const s_rectangle left, const s_rectangle right) {

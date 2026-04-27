@@ -67,7 +67,8 @@ int main(int argc, char *argv[]) {
   f_time_manager_initialize(&(time_manager));
   f_layer_append(f_renderer_get_layer(&renderer, 0), f_ui_single_line_field_malloc(NULL,
     f_time_manager_get_clock(&(time_manager), "ui", "ui"), "Prova scrittura",
-    f_font_manager_get(&(font_manager), "opensans.ttf", 24), (s_rectangle){10, 10, 400, 40}));
+    f_font_manager_get(&(font_manager), "opensans.ttf", 12), (s_rectangle){10, 10, 400, 20}));
+  ((s_ui_single_line_field *)f_renderer_get_layer(&renderer, 0)->last)->head.font_color = (s_color){255, 255, 255, 255};
   if ((animation_pack = (s_animation_pack *)f_animation_pack_malloc(NULL, "gianmario.png", (s_point){(rand() % 700) + 50, (rand() % 500) + 50}, 128, 140, 50))) {
     f_color_set(&(animation_pack)->mask, (s_color){255, 255, 255, 255});
     ((s_image *)f_renderer_get_layer(&renderer, 0)->last)->angle = 180;
