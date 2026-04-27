@@ -24,13 +24,21 @@
 #define UI_OBJECT_H
 #include "../barf_object.h"
 #include "../image.h"
-#define d_ui_object_default_background (s_color){180, 180, 180, 255}
-#define d_ui_object_default_border (s_color){24, 24, 24, 255}
-#define d_ui_object_default_cursor (s_color){180, 24, 24, 255}
+#define d_ui_object_default_background (s_color){35, 38, 50, 255}
+#define d_ui_object_default_shadow (s_color){15, 17, 25, 255}
+#define d_ui_object_default_border (s_color){65, 70, 90, 255}
+#define d_ui_object_default_cursor (s_color){0, 190, 255, 255}
+typedef enum e_ui_object_components {
+  e_ui_object_component_dont_draw_border = 0x001,
+  e_ui_object_component_dont_draw_background = 0x002,
+  e_ui_object_component_dont_draw_shadow = 0x004,
+  e_ui_object_component_dont_draw_cursor = 0x008
+} e_ui_object_components;
 typedef struct s_ui_object {
   s_barf_object head;
   SDL_Surface *unoptimized_surface;
   SDL_Texture *texture;
   bool active;
+  int flag;
 } s_ui_object;
 #endif //UI_OBJECT_H

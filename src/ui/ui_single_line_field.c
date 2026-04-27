@@ -51,16 +51,28 @@ static void p_ui_single_line_field_render(s_ui_single_line_field *self, struct s
     .h = self->position.height
   };
   int cursor_image_position_x = p_ui_single_line_get_cursor_position_in_pixels(self), delta_position_x = 0;
+  time_t elapsed_time_milliseconds;
   self->head.destination.x = self->position.origin.x + d_ui_single_line_field_container_extra_space_pixels;
   self->head.destination.y = self->position.origin.y + d_ui_single_line_field_container_extra_space_pixels;
   self->head.visible_area.width = self->position.width - (2 * d_ui_single_line_field_container_extra_space_pixels);
   self->head.visible_area.height = self->position.height - (2 * d_ui_single_line_field_container_extra_space_pixels);
-  if (self->background_draw) {
+  if ((self->head.head.flag & e_ui_object_component_dont_draw_shadow) != e_ui_object_component_dont_draw_shadow) {
+    SDL_Rect destination_shadow = {
+      .x = (destination.x + d_ui_single_line_field_container_shadow_displacement_pixels),
+      .y = (destination.y + d_ui_single_line_field_container_shadow_displacement_pixels),
+      .w = destination.w,
+      .h = destination.h
+    };
+    SDL_SetRenderDrawColor(renderer->renderer, self->shadow_color.red, self->shadow_color.green,
+      self->shadow_color.blue, self->shadow_color.alpha);
+    SDL_RenderFillRect(renderer->renderer, &destination_shadow);
+  }
+  if ((self->head.head.flag & e_ui_object_component_dont_draw_background) != e_ui_object_component_dont_draw_background) {
     SDL_SetRenderDrawColor(renderer->renderer, self->background_color.red, self->background_color.green,
       self->background_color.blue, self->background_color.alpha);
     SDL_RenderFillRect(renderer->renderer, &destination);
   }
-  if (self->border_draw) {
+  if ((self->head.head.flag & e_ui_object_component_dont_draw_border) != e_ui_object_component_dont_draw_border) {
     SDL_SetRenderDrawColor(renderer->renderer, self->border_color.red, self->border_color.green, self->border_color.blue,
       self->border_color.alpha);
     SDL_RenderDrawRect(renderer->renderer, &destination);
@@ -70,17 +82,20 @@ static void p_ui_single_line_field_render(s_ui_single_line_field *self, struct s
     self->head.visible_area.origin.x = (float)delta_position_x;
   if (self->f_children_render)
     self->f_children_render((s_barf_object *)&(self->head), renderer);
-  if (self->cursor_draw) {
-    SDL_Rect cursor_position = {
-      .x = cursor_image_position_x,
-      .y = 0,
-      .w = d_ui_single_line_field_container_extra_space_pixels,
-      .h = TTF_FontHeight(self->head.reference_font)
-    };
-    cursor_position.x += (int)(self->head.destination.x - self->head.visible_area.origin.x);
-    cursor_position.y += (int)self->head.destination.y;
-    SDL_SetRenderDrawColor(renderer->renderer, self->cursor_color.red, self->cursor_color.green, self->cursor_color.blue, self->cursor_color.alpha);
-    SDL_RenderDrawRect(renderer->renderer, &cursor_position);
+  if ((self->head.head.active) && ((self->head.head.flag & e_ui_object_component_dont_draw_cursor) != e_ui_object_component_dont_draw_cursor)) {
+    if ((elapsed_time_milliseconds = f_time_manager_elapsed_time_milliseconds(self->reference_clock, false)) < self->cursor_blink_milliseconds) {
+      SDL_Rect cursor_position = {
+        .x = cursor_image_position_x,
+        .y = 0,
+        .w = d_ui_single_line_field_container_extra_space_pixels,
+        .h = TTF_FontHeight(self->head.reference_font)
+      };
+      cursor_position.x += (int)(self->head.destination.x - self->head.visible_area.origin.x);
+      cursor_position.y += (int)self->head.destination.y;
+      SDL_SetRenderDrawColor(renderer->renderer, self->cursor_color.red, self->cursor_color.green, self->cursor_color.blue, self->cursor_color.alpha);
+      SDL_RenderDrawRect(renderer->renderer, &cursor_position);
+    } else if ((elapsed_time_milliseconds > (self->cursor_blink_milliseconds * 2)))
+      f_time_manager_elapsed_time_milliseconds(self->reference_clock, true);
   }
 }
 static void p_ui_single_line_field_listen(s_ui_single_line_field *self, struct s_renderer *renderer, SDL_Event *event) {
@@ -92,7 +107,7 @@ static void p_ui_single_line_field_listen(s_ui_single_line_field *self, struct s
       self->head.head.active = false;
   }
   if (self->head.head.active)
-  if (event) {
+  if ((event) && (self->editable)) {
     if (event->type == SDL_TEXTINPUT) {
       size_t length_additional_content = strlen(event->text.text), length_current_content = strlen(d_ui_label_get_printable_content(&(self->head))),
       length_final_content = length_additional_content + length_current_content + 1;
@@ -156,13 +171,13 @@ s_barf_object *f_ui_single_line_field_malloc(s_ui_single_line_field *holder, s_t
       result->position = position;
       result->reference_clock = reference_clock;
       result->background_color = d_ui_object_default_background;
+      result->shadow_color = d_ui_object_default_shadow;
       result->border_color = d_ui_object_default_border;
       result->cursor_color = d_ui_object_default_cursor;
+      result->cursor_blink_milliseconds = d_ui_single_line_field_blink_milliseconds;
       if (content)
         result->cursor_position = strlen(content);
-      result->background_draw = true;
-      result->border_draw = true;
-      result->cursor_draw = true;
+      result->editable = true;
       result->head.head.head.f_barf_render = (l_barf_render)p_ui_single_line_field_render;
       result->head.head.head.f_barf_listen = (l_barf_listen)p_ui_single_line_field_listen;
       result->head.head.head.f_barf_delete = (l_barf_delete)p_ui_single_line_field_delete;

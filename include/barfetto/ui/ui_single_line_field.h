@@ -25,12 +25,15 @@
 #include "ui_label.h"
 #include "../time_manager.h"
 #define d_ui_single_line_field_container_extra_space_pixels 2
+#define d_ui_single_line_field_container_shadow_displacement_pixels 2
+#define d_ui_single_line_field_blink_milliseconds 500
 typedef struct s_ui_single_line_field {
   s_ui_label head;
   s_rectangle position;
-  s_color background_color, border_color, cursor_color;
-  bool cursor_draw, border_draw, background_draw, editable;
+  s_color background_color, shadow_color, border_color, cursor_color;
+  bool editable;
   size_t cursor_position;
+  time_t cursor_blink_milliseconds;
   s_time_manager_clock *reference_clock;
   l_barf_render f_children_render;
   l_barf_delete f_children_delete;

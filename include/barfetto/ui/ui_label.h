@@ -30,7 +30,7 @@ typedef struct s_ui_label {
   s_ui_object head;
   s_point destination;
   s_rectangle visible_area;
-  s_color color;
+  s_color font_color;
   TTF_Font *reference_font;
   size_t allocated_space;
   char *content;
