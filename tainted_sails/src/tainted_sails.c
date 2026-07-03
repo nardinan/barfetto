@@ -20,24 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include <time.h>
 #include <fcntl.h>
-#include "../../include/barfetto/terminator_listener.h"
-#include "../../include/barfetto/renderer.h"
+#include <time.h>
 #include "../../include/barfetto/animation_pack.h"
 #include "../../include/barfetto/entity.h"
-#include "../../include/barfetto/ui/ui_label.h"
 #include "../../include/barfetto/font_manager.h"
+#include "../../include/barfetto/renderer.h"
+#include "../../include/barfetto/terminator_listener.h"
+#include "../../include/barfetto/ui/ui_button.h"
+#include "../../include/barfetto/ui/ui_label.h"
 #include "../../include/barfetto/ui/ui_single_line_field.h"
-const char *animations[] = {
-  "down",
-  "left",
-  "right",
-  "up"
-};
+const char *animations[] = {"down", "left", "right", "up"};
 e_barf_object_listener_processed_events f_vertical_move_up(s_entity *self, s_renderer *renderer, SDL_Event *event) {
   return ((event->type == SDL_KEYDOWN) && (event->key.keysym.sym == SDLK_UP)) ? e_barf_object_listener_processed_event_consumed
-                                                                               : e_barf_object_listener_processed_event_ignored;
+                                                                              : e_barf_object_listener_processed_event_ignored;
 }
 e_barf_object_listener_processed_events f_vertical_move_down(s_entity *self, s_renderer *renderer, SDL_Event *event) {
   return ((event->type == SDL_KEYDOWN) && (event->key.keysym.sym == SDLK_DOWN)) ? e_barf_object_listener_processed_event_consumed
@@ -49,7 +45,7 @@ e_barf_object_listener_processed_events f_vertical_move_left(s_entity *self, s_r
 }
 e_barf_object_listener_processed_events f_vertical_move_right(s_entity *self, s_renderer *renderer, SDL_Event *event) {
   return ((event->type == SDL_KEYDOWN) && (event->key.keysym.sym == SDLK_RIGHT)) ? e_barf_object_listener_processed_event_consumed
-                                                                                : e_barf_object_listener_processed_event_ignored;
+                                                                                 : e_barf_object_listener_processed_event_ignored;
 }
 void f_vertical_trigger_up(s_entity *self) {
   printf("Up up up\n");
@@ -65,10 +61,15 @@ int main(int argc, char *argv[]) {
   f_layer_append(f_renderer_get_layer(&renderer, 0), f_terminator_listener_malloc());
   f_font_manager_initialize(&(font_manager), "./fonts");
   f_time_manager_initialize(&(time_manager));
-  f_layer_append(f_renderer_get_layer(&renderer, 0), f_ui_single_line_field_malloc(NULL,
-    f_time_manager_get_clock(&(time_manager), "ui", "ui"), "Prova scrittura",
-    f_font_manager_get(&(font_manager), "opensans.ttf", 12), (s_rectangle){10, 10, 400, 20}));
-  ((s_ui_single_line_field *)f_renderer_get_layer(&renderer, 0)->last)->head.font_color = (s_color){255, 255, 255, 255};
+  f_layer_append(f_renderer_get_layer(&renderer, 0),
+      f_ui_single_line_field_malloc(NULL, f_time_manager_get_clock(&(time_manager), "ui", "ui"), "Prova scrittura",
+          f_font_manager_get(&(font_manager), "opensans.ttf", 12), (s_rectangle) {10, 10, 400, 20}));
+  ((s_ui_single_line_field *) f_renderer_get_layer(&renderer, 0)->last)->head.font_color = (s_color) {255, 255, 255, 255};
+  f_layer_append(f_renderer_get_layer(&renderer, 0),
+      f_ui_button_malloc(NULL, f_time_manager_get_clock(&(time_manager), "ui", "ui_button"), "Cliccami",
+          f_font_manager_get(&(font_manager), "opensans.ttf", 15), (s_rectangle) {10, 50, 200, 40}, NULL, NULL));
+  ((s_ui_button *) f_renderer_get_layer(&renderer, 0)->last)->auto_release_after_click = false;
+  ((s_ui_single_line_field *) f_renderer_get_layer(&renderer, 0)->last)->head.font_color = (s_color) {255, 255, 255, 255};
   if ((animation_pack = (s_animation_pack *)f_animation_pack_malloc(NULL, "gianmario.png", (s_point){(rand() % 700) + 50, (rand() % 500) + 50}, 128, 140, 50))) {
     f_color_set(&(animation_pack)->mask, (s_color){255, 255, 255, 255});
     ((s_image *)f_renderer_get_layer(&renderer, 0)->last)->angle = 180;

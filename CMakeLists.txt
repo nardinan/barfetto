@@ -28,6 +28,8 @@ add_executable(barfetto
         include/barfetto/font_manager.h
         include/barfetto/ui/ui_single_line_field.h
         src/ui/ui_single_line_field.c
+        include/barfetto/ui/ui_button.h
+        src/ui/ui_button.c
         include/barfetto/time_manager.h
         src/time_manager.c
         src/point.c

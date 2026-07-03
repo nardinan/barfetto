@@ -34,14 +34,16 @@ static void p_ui_label_render(s_ui_label *self, struct s_renderer *renderer) {
           (self->visible_area.height == 0)) {
           picked_width = (self->head.unoptimized_surface->w - self->visible_area.origin.x);
           picked_height = (self->head.unoptimized_surface->h - self->visible_area.origin.y);
-          } else {
-            /* we need to pick the smallest number between the texture size and the visible area: this is going to be our width
-             * for both source and height */
-            picked_width = ((self->head.unoptimized_surface->w - self->visible_area.origin.x) > self->visible_area.width) ? self->visible_area.width :
-            (self->head.unoptimized_surface->w - self->visible_area.origin.x);
-            picked_height = ((self->head.unoptimized_surface->h - self->visible_area.origin.y) > self->visible_area.height) ? self->visible_area.height :
-            (self->head.unoptimized_surface->h - self->visible_area.origin.y);
-          }
+        } else {
+          /* we need to pick the smallest number between the texture size and the visible area: this is going to be our width
+           * for both source and height */
+          picked_width = ((self->head.unoptimized_surface->w - self->visible_area.origin.x) > self->visible_area.width)
+              ? self->visible_area.width
+              : (self->head.unoptimized_surface->w - self->visible_area.origin.x);
+          picked_height = ((self->head.unoptimized_surface->h - self->visible_area.origin.y) > self->visible_area.height)
+              ? self->visible_area.height
+              : (self->head.unoptimized_surface->h - self->visible_area.origin.y);
+        }
         SDL_Rect destination = {
           .x = (self->destination.x - renderer->selected_camera->visible_area.origin.x),
           .y = (self->destination.y - renderer->selected_camera->visible_area.origin.y),

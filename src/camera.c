@@ -83,7 +83,7 @@ void f_camera_disable_rendering(s_camera *self, struct s_renderer *renderer) {
 int f_camera_get_mouse_position(s_camera *self, int *mouse_x, int *mouse_y) {
   float ratio_x = ((float)self->visible_area.width / (float)self->screen_destination.width),
          ratio_y = ((float)self->visible_area.height / (float)self->screen_destination.height);
-  int raw_mouse_x, raw_mouse_y, state =  SDL_GetMouseState(&raw_mouse_x, &raw_mouse_y);
+  int raw_mouse_x, raw_mouse_y, state = SDL_GetMouseState(&raw_mouse_x, &raw_mouse_y);
   *mouse_x = ((raw_mouse_x - self->screen_destination.origin.x) * ratio_x) + self->visible_area.origin.x;
   *mouse_y = ((raw_mouse_y - self->screen_destination.origin.y) * ratio_y) + self->visible_area.origin.y;
   return state;

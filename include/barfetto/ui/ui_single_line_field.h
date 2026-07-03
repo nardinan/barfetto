@@ -22,8 +22,8 @@
  */
 #ifndef UI_SINGLE_LINE_FIELD_H
 #define UI_SINGLE_LINE_FIELD_H
-#include "ui_label.h"
 #include "../time_manager.h"
+#include "ui_label.h"
 #define d_ui_single_line_field_container_extra_space_pixels 2
 #define d_ui_single_line_field_container_shadow_displacement_pixels 2
 #define d_ui_single_line_field_blink_milliseconds 500

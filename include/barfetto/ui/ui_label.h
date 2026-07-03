@@ -23,9 +23,10 @@
 #ifndef UI_LABEL_H
 #define UI_LABEL_H
 #include <SDL_ttf.h>
-#include "ui_object.h"
-#include "../point.h"
 #include "../color.h"
+#include "../point.h"
+#include "../rectangle.h"
+#include "ui_object.h"
 typedef struct s_ui_label {
   s_ui_object head;
   s_point destination;

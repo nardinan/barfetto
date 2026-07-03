@@ -27,6 +27,10 @@ void f_color_set(s_color *destination, s_color source) {
   destination->blue = source.blue;
   destination->alpha = source.alpha;
 }
+bool f_color_compare(s_color *element_1, s_color *element_2) {
+  return ((element_1->red == element_2->red) && (element_1->green == element_2->green) && (element_1->blue == element_2->blue) &&
+      (element_1->alpha == element_2->alpha));
+}
 static s_color p_color_json_unserialize(s_json *json, s_json_node *node) {
   s_color result = {0, 0, 0, 255};
   if ((json) && (node) && (node->type == e_json_type_array)) {

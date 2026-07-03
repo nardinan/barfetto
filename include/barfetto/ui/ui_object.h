@@ -23,10 +23,18 @@
 #ifndef UI_OBJECT_H
 #define UI_OBJECT_H
 #include "../barf_object.h"
-#include "../image.h"
-#define d_ui_object_default_background (s_color){35, 38, 50, 255}
-#define d_ui_object_default_shadow (s_color){15, 17, 25, 255}
-#define d_ui_object_default_border (s_color){65, 70, 90, 255}
+#define d_ui_object_default_background (s_color){50, 58, 75, 255}
+#define d_ui_object_default_shadow (s_color){22, 25, 35, 255}
+#define d_ui_object_default_border (s_color){90, 100, 130, 255}
+#define d_ui_object_default_font (s_color){200, 200, 200, 255}
+#define d_ui_object_default_grayed_out_background (s_color){30, 33, 40, 255}
+#define d_ui_object_default_grayed_out_shadow (s_color){12, 14, 18, 255}
+#define d_ui_object_default_grayed_out_border (s_color){45, 50, 60, 255}
+#define d_ui_object_default_grayed_out_font (s_color){70, 75, 90, 255}
+#define d_ui_object_default_clicked_background (s_color){80, 95, 135, 255}
+#define d_ui_object_default_clicked_shadow (s_color){15, 18, 28, 255}
+#define d_ui_object_default_clicked_border (s_color){150, 165, 200, 255}
+#define d_ui_object_default_clicked_font (s_color){255, 255, 255, 255}
 #define d_ui_object_default_cursor (s_color){0, 190, 255, 255}
 typedef enum e_ui_object_components {
   e_ui_object_component_dont_draw_border = 0x001,

@@ -82,79 +82,84 @@ static void p_ui_single_line_field_render(s_ui_single_line_field *self, struct s
     self->head.visible_area.origin.x = (float)delta_position_x;
   if (self->f_children_render)
     self->f_children_render((s_barf_object *)&(self->head), renderer);
-  if ((self->head.head.active) && ((self->head.head.flag & e_ui_object_component_dont_draw_cursor) != e_ui_object_component_dont_draw_cursor)) {
+  if ((self->head.head.active) && ((self->head.head.flag & e_ui_object_component_dont_draw_cursor) != e_ui_object_component_dont_draw_cursor) &&
+      (self->reference_clock)) {
     if ((elapsed_time_milliseconds = f_time_manager_elapsed_time_milliseconds(self->reference_clock, false)) < self->cursor_blink_milliseconds) {
       SDL_Rect cursor_position = {
-        .x = cursor_image_position_x,
-        .y = 0,
-        .w = d_ui_single_line_field_container_extra_space_pixels,
-        .h = TTF_FontHeight(self->head.reference_font)
-      };
-      cursor_position.x += (int)(self->head.destination.x - self->head.visible_area.origin.x);
-      cursor_position.y += (int)self->head.destination.y;
+          .x = cursor_image_position_x, .y = 0, .w = d_ui_single_line_field_container_extra_space_pixels, .h = TTF_FontHeight(self->head.reference_font)};
+      cursor_position.x += (int) (self->head.destination.x - self->head.visible_area.origin.x);
+      cursor_position.y += (int) self->head.destination.y;
       SDL_SetRenderDrawColor(renderer->renderer, self->cursor_color.red, self->cursor_color.green, self->cursor_color.blue, self->cursor_color.alpha);
       SDL_RenderDrawRect(renderer->renderer, &cursor_position);
     } else if ((elapsed_time_milliseconds > (self->cursor_blink_milliseconds * 2)))
       f_time_manager_elapsed_time_milliseconds(self->reference_clock, true);
   }
 }
-static void p_ui_single_line_field_listen(s_ui_single_line_field *self, struct s_renderer *renderer, SDL_Event *event) {
+static e_barf_object_listener_processed_events p_ui_single_line_field_listen(s_ui_single_line_field *self, struct s_renderer *renderer, SDL_Event *event) {
   int mouse_x, mouse_y;
+  e_barf_object_listener_processed_events result = e_barf_object_listener_processed_event_ignored;
   if (f_camera_get_mouse_position(renderer->selected_camera, &mouse_x, &mouse_y) & SDL_BUTTON_LMASK) {
     if (f_rectangle_contains_point(self->position, (s_point){(float)mouse_x, (float)mouse_y}))
       self->head.head.active = true;
     else
       self->head.head.active = false;
   }
-  if (self->head.head.active)
-  if ((event) && (self->editable)) {
-    if (event->type == SDL_TEXTINPUT) {
-      size_t length_additional_content = strlen(event->text.text), length_current_content = strlen(d_ui_label_get_printable_content(&(self->head))),
-      length_final_content = length_additional_content + length_current_content + 1;
-      if (length_additional_content > 0) {
-        char stack_buffer[length_final_content];
-        if (self->cursor_position > length_current_content)
-          self->cursor_position = length_current_content;
-        if (self->cursor_position > 0) /* we have a block of text before the cursor */
-          strncpy(&(stack_buffer[0]), self->head.content, self->cursor_position);
-        strcpy(&(stack_buffer[self->cursor_position]), event->text.text);
-        if (self->cursor_position < length_current_content) /* we have a block of text at the right of the cursor that should scoot */
-          strcpy(&(stack_buffer[self->cursor_position + length_additional_content]), &(self->head.content[self->cursor_position]));
-        stack_buffer[length_final_content - 1] = 0;
-        self->cursor_position += length_additional_content;
-        f_ui_label_update_text(&(self->head), stack_buffer);
-      }
-    } else if (event->type == SDL_KEYDOWN) {
-      switch (event->key.keysym.sym) {
-        case SDLK_RIGHT: {
-          const size_t length_text = strlen(d_ui_label_get_printable_content(&(self->head)));
-          if (self->cursor_position < length_text)
-            ++(self->cursor_position);
-          break;
+  if (self->head.head.active) {
+    result = e_barf_object_listener_processed_event_processed_and_forwarded;
+    if ((event) && (self->editable)) {
+      if (event->type == SDL_TEXTINPUT) {
+        size_t length_additional_content = strlen(event->text.text), length_current_content = strlen(d_ui_label_get_printable_content(&(self->head))),
+               length_final_content = length_additional_content + length_current_content + 1;
+        result = e_barf_object_listener_processed_event_consumed;
+        if (length_additional_content > 0) {
+          char stack_buffer[length_final_content];
+          if (self->cursor_position > length_current_content)
+            self->cursor_position = length_current_content;
+          if (self->cursor_position > 0) /* we have a block of text before the cursor */
+            strncpy(&(stack_buffer[0]), self->head.content, self->cursor_position);
+          strcpy(&(stack_buffer[self->cursor_position]), event->text.text);
+          if (self->cursor_position < length_current_content) /* we have a block of text at the right of the cursor that should scoot */
+            strcpy(&(stack_buffer[self->cursor_position + length_additional_content]), &(self->head.content[self->cursor_position]));
+          stack_buffer[length_final_content - 1] = 0;
+          self->cursor_position += length_additional_content;
+          f_ui_label_update_text(&(self->head), stack_buffer);
         }
-        case SDLK_LEFT: {
-          if (self->cursor_position > 0)
-            --(self->cursor_position);
-          break;
-        }
-        case SDLK_BACKSPACE: {
-          const size_t length_text = strlen(d_ui_label_get_printable_content(&(self->head)));
-          if (length_text > 0)
-            if (self->cursor_position > 0) {
-              memmove((self->head.content + self->cursor_position - 1),
-                (self->head.content + self->cursor_position), strlen(self->head.content + self->cursor_position));
-              self->head.content[length_text - 1] = 0;
-              f_ui_label_force_refresh(&(self->head));
+      } else if (event->type == SDL_KEYDOWN) {
+        switch (event->key.keysym.sym) {
+          case SDLK_RIGHT: {
+            const size_t length_text = strlen(d_ui_label_get_printable_content(&(self->head)));
+            if (self->cursor_position < length_text)
+              ++(self->cursor_position);
+            result = e_barf_object_listener_processed_event_consumed;
+            break;
+          }
+          case SDLK_LEFT: {
+            if (self->cursor_position > 0)
               --(self->cursor_position);
-            }
-          break;
-        }
-        default: {
-          break;
+            result = e_barf_object_listener_processed_event_consumed;
+            break;
+          }
+          case SDLK_BACKSPACE: {
+            const size_t length_text = strlen(d_ui_label_get_printable_content(&(self->head)));
+            if (length_text > 0)
+              if (self->cursor_position > 0) {
+                memmove((self->head.content + self->cursor_position - 1), (self->head.content + self->cursor_position),
+                    strlen(self->head.content + self->cursor_position));
+                self->head.content[length_text - 1] = 0;
+                f_ui_label_force_refresh(&(self->head));
+                --(self->cursor_position);
+              }
+            result = e_barf_object_listener_processed_event_consumed;
+            break;
+          }
+          default: {
+            break;
+          }
         }
       }
     }
   }
+  return result;
 }
 static void p_ui_single_line_field_delete(s_ui_single_line_field *self) {
   if (self->f_children_delete)

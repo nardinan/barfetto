@@ -27,6 +27,6 @@ typedef struct s_color {
   unsigned char red, green, blue, alpha;
 } s_color;
 extern void f_color_set(s_color *destination, s_color source);
+extern bool f_color_compare(s_color *element_1, s_color *element_2);
 extern s_color f_color_json_get(s_json *json, s_json_node *parent, const char *key, const s_color default_value);
 #endif /* COLOR_H */
-
