@@ -25,7 +25,8 @@
 static void p_animation_render(s_animation *self, s_renderer *renderer) {
   if (self->behaviour != e_animation_behaviour_hidden) {
     unsigned int now_ticks = SDL_GetTicks(), elapsed;
-    if ((elapsed = (now_ticks - self->ticks_last)) > self->ticks_next_frame) {
+    if ((self->ticks_next_frame > 0) && (self->grid_x > 0) &&
+        ((elapsed = (now_ticks - self->ticks_last)) > self->ticks_next_frame)) {
       unsigned int skip_frames = (elapsed / self->ticks_next_frame), residual = (elapsed - (skip_frames * self->ticks_next_frame)),
                    displacement_x, displacement_y;
       if (self->behaviour == e_animation_behaviour_stop)
@@ -67,10 +68,13 @@ s_barf_object *f_animation_malloc(s_animation *holder, const char *source, s_poi
       result->f_children_render = result->head.head.f_barf_render;
       result->selected_frame.width = width;
       result->selected_frame.height = height;
-      result->grid_x = (result->head.source.width / width);
-      result->grid_y = (result->head.source.height / height);
+      if ((width > 0) && (height > 0)) {
+        result->grid_x = (result->head.source.width / width);
+        result->grid_y = (result->head.source.height / height);
+      }
       result->ticks_next_frame = ticks_next_frame;
-      result->index_last_frame = ((result->grid_x * result->grid_y) - 1);
+      if ((result->grid_x > 0) && (result->grid_y > 0))
+        result->index_last_frame = ((result->grid_x * result->grid_y) - 1);
       result->head.head.f_barf_render = (l_barf_render)p_animation_render;
     }
   }

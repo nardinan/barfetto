@@ -37,6 +37,7 @@ d_result_declare(SHIT_NO_SDL);
 d_result_declare(SHIT_NO_SDL_WINDOW);
 d_result_declare(SHIT_NO_SDL_RENDERER);
 d_result_declare(SHIT_NO_SDL_IMG);
+d_result_declare(SHIT_NO_SDL_TTF);
 struct s_renderer;
 typedef enum e_renderer_statuses {
   e_renderer_status_running = 0,

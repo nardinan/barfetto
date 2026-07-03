@@ -31,7 +31,7 @@ static size_t p_ui_single_line_get_cursor_position_in_text(s_ui_single_line_fiel
 static int p_ui_single_line_get_cursor_position_in_pixels(s_ui_single_line_field *self) {
   const size_t cursor_position = p_ui_single_line_get_cursor_position_in_text(self), length_label = strlen(d_ui_label_get_printable_content(&(self->head)));
   int position_x = 0;
-  if ((length_label > 0) && (cursor_position > 0)) {
+  if ((self->head.reference_font) && (length_label > 0) && (cursor_position > 0)) {
     if (cursor_position < length_label) {
       char backup_character = self->head.content[cursor_position];
       int position_height;
@@ -51,7 +51,6 @@ static void p_ui_single_line_field_render(s_ui_single_line_field *self, struct s
     .h = self->position.height
   };
   int cursor_image_position_x = p_ui_single_line_get_cursor_position_in_pixels(self), delta_position_x = 0;
-  time_t elapsed_time_milliseconds;
   self->head.destination.x = self->position.origin.x + d_ui_single_line_field_container_extra_space_pixels;
   self->head.destination.y = self->position.origin.y + d_ui_single_line_field_container_extra_space_pixels;
   self->head.visible_area.width = self->position.width - (2 * d_ui_single_line_field_container_extra_space_pixels);
@@ -83,16 +82,17 @@ static void p_ui_single_line_field_render(s_ui_single_line_field *self, struct s
   if (self->f_children_render)
     self->f_children_render((s_barf_object *)&(self->head), renderer);
   if ((self->head.head.active) && ((self->head.head.flag & e_ui_object_component_dont_draw_cursor) != e_ui_object_component_dont_draw_cursor) &&
-      (self->reference_clock)) {
-    if ((elapsed_time_milliseconds = f_time_manager_elapsed_time_milliseconds(self->reference_clock, false)) < self->cursor_blink_milliseconds) {
+      (self->head.reference_font) && (self->reference_clock) && (self->cursor_blink_milliseconds > 0)) {
+    /* the blink phase is derived from the elapsed time through a modulo, without resetting the clock, so the same
+     * clock can be shared with other components */
+    if (((f_time_manager_elapsed_time_milliseconds(self->reference_clock, false) / self->cursor_blink_milliseconds) % 2) == 0) {
       SDL_Rect cursor_position = {
           .x = cursor_image_position_x, .y = 0, .w = d_ui_single_line_field_container_extra_space_pixels, .h = TTF_FontHeight(self->head.reference_font)};
       cursor_position.x += (int) (self->head.destination.x - self->head.visible_area.origin.x);
       cursor_position.y += (int) self->head.destination.y;
       SDL_SetRenderDrawColor(renderer->renderer, self->cursor_color.red, self->cursor_color.green, self->cursor_color.blue, self->cursor_color.alpha);
       SDL_RenderDrawRect(renderer->renderer, &cursor_position);
-    } else if ((elapsed_time_milliseconds > (self->cursor_blink_milliseconds * 2)))
-      f_time_manager_elapsed_time_milliseconds(self->reference_clock, true);
+    }
   }
 }
 static e_barf_object_listener_processed_events p_ui_single_line_field_listen(s_ui_single_line_field *self, struct s_renderer *renderer, SDL_Event *event) {

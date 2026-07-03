@@ -105,7 +105,7 @@ void f_ui_label_update_text(s_ui_label *self, const char *content) {
         self->allocated_space = reallocated_space;
       }
     }
-    if (self->content) {
+    if ((self->content) && (self->allocated_space >= (length_content + 1))) {
       memset(self->content, 0, (length_content + 1));
       strncpy(self->content, content, length_content);
     }

@@ -26,35 +26,41 @@ d_result_define(SHIT_NO_SDL, 1, "Failure, cannot initialize SDL library");
 d_result_define(SHIT_NO_SDL_WINDOW, 2, "Failure, cannot initialize a SDL window");
 d_result_define(SHIT_NO_SDL_RENDERER, 3, "Failure, cannot create and initialize a SDL renderer");
 d_result_define(SHIT_NO_SDL_IMG, 4, "Failure, cannot initialize SDL IMG library");
+d_result_define(SHIT_NO_SDL_TTF, 5, "Failure, cannot initialize SDL TTF library");
+static void p_renderer_teardown(s_renderer *renderer);
 coremio_result f_renderer_initialize(s_renderer *renderer, const char *title, size_t screen_width, size_t screen_height, size_t frames_per_second) {
   coremio_result result = NOICE;
   memset(renderer, 0, sizeof(s_renderer));
   if (((renderer->layers = (s_layer **)f_array_malloc(d_renderer_layer_bucket, sizeof(s_layer *)))) &&
       ((renderer->cameras = (s_camera **)f_array_malloc(d_renderer_camera_bucket, sizeof(s_camera *))))) {
-    TTF_Init();
-    if (SDL_Init(SDL_INIT_VIDEO) >= 0) {
-      SDL_StartTextInput();
-      renderer->screen_width = screen_width;
-      renderer->screen_height = screen_height;
-      renderer->frames_per_second = frames_per_second;
-      if ((renderer->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,
-              SDL_WINDOWPOS_CENTERED, renderer->screen_width, renderer->screen_height, (SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL)))) {
-        if ((renderer->renderer = SDL_CreateRenderer(renderer->window, -1, (SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)))) {
-          int real_screen_width, real_screen_height;
-          SDL_SetRenderDrawBlendMode(renderer->renderer, SDL_BLENDMODE_BLEND);
-          SDL_GetWindowSize(renderer->window, &real_screen_width, &real_screen_height);
-          renderer->real_screen_width = real_screen_width;
-          renderer->real_screen_height = real_screen_height;
-          if (IMG_Init((IMG_INIT_PNG | IMG_INIT_JPG)) != (IMG_INIT_PNG | IMG_INIT_JPG))
-            result = SHIT_NO_SDL_IMG;
+    if (TTF_Init() >= 0) {
+      if (SDL_Init(SDL_INIT_VIDEO) >= 0) {
+        SDL_StartTextInput();
+        renderer->screen_width = screen_width;
+        renderer->screen_height = screen_height;
+        renderer->frames_per_second = frames_per_second;
+        if ((renderer->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,
+                SDL_WINDOWPOS_CENTERED, renderer->screen_width, renderer->screen_height, (SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL)))) {
+          if ((renderer->renderer = SDL_CreateRenderer(renderer->window, -1, (SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)))) {
+            int real_screen_width, real_screen_height;
+            SDL_SetRenderDrawBlendMode(renderer->renderer, SDL_BLENDMODE_BLEND);
+            SDL_GetWindowSize(renderer->window, &real_screen_width, &real_screen_height);
+            renderer->real_screen_width = real_screen_width;
+            renderer->real_screen_height = real_screen_height;
+            if (IMG_Init((IMG_INIT_PNG | IMG_INIT_JPG)) != (IMG_INIT_PNG | IMG_INIT_JPG))
+              result = SHIT_NO_SDL_IMG;
+          } else
+            result = SHIT_NO_SDL_RENDERER;
         } else
-          result = SHIT_NO_SDL_RENDERER;
+          result = SHIT_NO_SDL_WINDOW;
       } else
-        result = SHIT_NO_SDL_WINDOW;
+        result = SHIT_NO_SDL;
     } else
-      result = SHIT_NO_SDL;
-    if (result != NOICE)
+      result = SHIT_NO_SDL_TTF;
+    if (result != NOICE) {
       fprintf(stderr, "INITIALIZATION [failed] f_renderer_initialize returned %s and SDL says '%s'\n", result->name, SDL_GetError());
+      p_renderer_teardown(renderer);
+    }
   } else
     result = SHIT;
   return result;
@@ -74,6 +80,7 @@ static void p_renderer_teardown(s_renderer *renderer) {
         renderer->layers[index] = NULL;
       }
     f_array_free(renderer->layers);
+    renderer->layers = NULL;
   }
   if (renderer->cameras) {
     for (size_t index = 0; index < d_array_size(renderer->cameras); ++index)
@@ -84,12 +91,16 @@ static void p_renderer_teardown(s_renderer *renderer) {
         renderer->cameras[index] = NULL;
       }
     f_array_free(renderer->cameras);
+    renderer->cameras = NULL;
   }
   if (renderer->renderer)
     SDL_DestroyRenderer(renderer->renderer);
   if (renderer->window)
     SDL_DestroyWindow(renderer->window);
   SDL_StopTextInput();
+  IMG_Quit();
+  if (TTF_WasInit())
+    TTF_Quit();
   SDL_Quit();
 }
 e_renderer_statuses f_renderer_launch(s_renderer *renderer) {
@@ -98,10 +109,17 @@ e_renderer_statuses f_renderer_launch(s_renderer *renderer) {
   while (result == e_renderer_status_running) {
     unsigned int initial_ticks = SDL_GetTicks(), final_ticks, elapsed_ticks;
     size_t index_acquired_event = 0;
-    memset(renderer->events, d_renderer_events_pool_bucket, sizeof(SDL_Event));
-    while ((index_acquired_event < d_renderer_events_pool_bucket) &&
-        (SDL_PollEvent(&(renderer->events[index_acquired_event])) != 0))
-      ++index_acquired_event;
+    SDL_Event polled_event;
+    memset(renderer->events, 0, sizeof(renderer->events));
+    while ((index_acquired_event < d_renderer_events_pool_bucket) && (SDL_PollEvent(&polled_event) != 0)) {
+      /* consecutive mouse motions are coalesced into a single event to keep a burst of them from saturating the pool
+       * and delaying the rest of the queue to the next frames */
+      if ((polled_event.type == SDL_MOUSEMOTION) && (index_acquired_event > 0) &&
+          (renderer->events[index_acquired_event - 1].type == SDL_MOUSEMOTION))
+        renderer->events[index_acquired_event - 1] = polled_event;
+      else
+        renderer->events[index_acquired_event++] = polled_event;
+    }
     SDL_RenderClear(renderer->renderer);
     for (size_t index_camera = 0;
         (index_camera < d_array_size(renderer->cameras)) &&

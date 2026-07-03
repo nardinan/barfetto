@@ -20,7 +20,6 @@ add_executable(barfetto
         tainted_sails/src/tainted_sails.c
         include/barfetto/entity.h
         src/entity.c
-        tainted_sails/src/tainted_sails.c
         include/barfetto/ui/ui_object.h
         include/barfetto/ui/ui_label.h
         src/ui/ui_label.c

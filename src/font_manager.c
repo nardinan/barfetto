@@ -25,7 +25,10 @@
 static void p_font_manager_family_delete(s_font_manager_family *font_family) {
   for (size_t index_font = 0; index_font < d_font_family_pool_size; ++index_font)
     if (font_family->fonts[index_font].ttf_font) {
-      TTF_CloseFont(font_family->fonts[index_font].ttf_font);
+      /* fonts cannot be closed anymore once TTF has been shut down (f_renderer_launch quits TTF during its final
+       * teardown, before the caller has a chance to delete the font manager) */
+      if (TTF_WasInit())
+        TTF_CloseFont(font_family->fonts[index_font].ttf_font);
       font_family->fonts[index_font].ttf_font = NULL;
     }
 }
@@ -47,12 +50,15 @@ TTF_Font *f_font_manager_get(s_font_manager *font_manager, const char *name, siz
       if (font_family->fonts[index_font].size == size)
         result = font_family->fonts[index_font].ttf_font;
     if (!result) {
-      char buffer_path[d_string_buffer_size];
-      snprintf(buffer_path, (d_string_buffer_size - 1), "%s/%s", font_manager->reference_base_path, name);
-      if ((result = font_family->fonts[index_font].ttf_font = TTF_OpenFont(buffer_path, size))) {
-        font_family->fonts[index_font].size = size;
-        ++(font_family->entries);
-      }
+      if (index_font < d_font_family_pool_size) {
+        char buffer_path[d_string_buffer_size];
+        snprintf(buffer_path, (d_string_buffer_size - 1), "%s/%s", font_manager->reference_base_path, name);
+        if ((result = font_family->fonts[index_font].ttf_font = TTF_OpenFont(buffer_path, size))) {
+          font_family->fonts[index_font].size = size;
+          ++(font_family->entries);
+        }
+      } else
+        fprintf(stderr, "LOADING [failed] f_font_manager_get cannot host another size for the family '%s' (the pool is full)\n", name);
     }
   }
   return result;
