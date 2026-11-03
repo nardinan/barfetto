@@ -28,21 +28,14 @@ static void p_image_render(s_image *self, struct s_renderer *renderer) {
     if ((!self->texture->texture) && (self->texture->unoptimized_surface))
       self->texture->texture = SDL_CreateTextureFromSurface(renderer->renderer, self->texture->unoptimized_surface);
     if (self->texture->texture) {
-      SDL_Rect destination = {
-        .x = (self->destination.x - renderer->selected_camera->visible_area.origin.x),
-        .y = (self->destination.y - renderer->selected_camera->visible_area.origin.y),
-        .w = self->source.width,
-        .h = self->source.height
-      }, source = {
-        .x = self->source.origin.x,
-        .y = self->source.origin.y,
-        .w = self->source.width,
-        .h = self->source.height
-      };
+      SDL_Rect destination = {.x = (self->destination.x - renderer->selected_camera->visible_area.origin.x),
+                   .y = (self->destination.y - renderer->selected_camera->visible_area.origin.y),
+                   .w = self->source.width,
+                   .h = self->source.height},
+               source = {.x = self->source.origin.x, .y = self->source.origin.y, .w = self->source.width, .h = self->source.height};
       SDL_SetTextureColorMod(self->texture->texture, self->mask.red, self->mask.green, self->mask.blue);
       SDL_SetTextureAlphaMod(self->texture->texture, self->mask.alpha);
-      SDL_RenderCopyEx(renderer->renderer, self->texture->texture, &source, &destination, self->angle,
-          NULL, (SDL_RendererFlip)self->flip);
+      SDL_RenderCopyEx(renderer->renderer, self->texture->texture, &source, &destination, self->angle, NULL, (SDL_RendererFlip) self->flip);
     }
   }
 }
@@ -59,21 +52,21 @@ static void p_image_delete(s_image *self) {
 }
 s_barf_object *f_image_malloc(s_image *holder, const char *source, s_point destination) {
   s_image *result = holder;
-  if ((result) || (result = (s_image *)d_malloc(sizeof(s_image)))) {
+  if ((result) || (result = (s_image *) d_malloc(sizeof(s_image)))) {
     memset(result, 0, sizeof(s_image));
     if (dictionary_surface_cache.node_size != sizeof(s_surface_cache_node))
       f_dictionary_initialize(&dictionary_surface_cache, sizeof(s_surface_cache_node));
-    if ((result->texture = (s_surface_cache_node *)f_dictionary_get_or_create(&dictionary_surface_cache, source)) &&
+    if ((result->texture = (s_surface_cache_node *) f_dictionary_get_or_create(&dictionary_surface_cache, source)) &&
         ((result->texture->unoptimized_surface) || (result->texture->unoptimized_surface = IMG_Load(source)))) {
       ++result->texture->references;
       result->source.width = result->texture->unoptimized_surface->w;
       result->source.height = result->texture->unoptimized_surface->h;
       result->destination = destination;
-      f_color_set(&(result->mask), (s_color)d_image_default_mask);
-      result->head.f_barf_render = (l_barf_render)p_image_render;
-      result->head.f_barf_delete = (l_barf_delete)p_image_delete;
+      f_color_set(&(result->mask), (s_color) d_image_default_mask);
+      result->head.f_barf_render = (l_barf_render) p_image_render;
+      result->head.f_barf_delete = (l_barf_delete) p_image_delete;
     } else
       fprintf(stderr, "LOADING [failed] f_image_malloc says that '%s' cannot be loaded\n", source);
   }
-  return (s_barf_object *)result;
+  return (s_barf_object *) result;
 }

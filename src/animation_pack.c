@@ -24,7 +24,7 @@
 #include "../include/barfetto/renderer.h"
 s_animation_pack_status_node *f_animation_pack_get_status(s_animation_pack *self, const char *status) {
   bool is_created = false;
-  s_animation_pack_status_node *current_status = (s_animation_pack_status_node *)f_dictionary_get_or_create_informed(&(self->statuses), status, &is_created);
+  s_animation_pack_status_node *current_status = (s_animation_pack_status_node *) f_dictionary_get_or_create_informed(&(self->statuses), status, &is_created);
   if (is_created) {
     current_status->ticks_next_frame = self->ticks_next_frame;
     current_status->mask = self->mask;
@@ -38,10 +38,10 @@ static void p_animation_pack_render(s_animation_pack *self, struct s_renderer *r
   self->head.head.destination.y += displacement_y;
   self->ticks_last = now_ticks;
   if (self->f_children_render)
-    self->f_children_render((s_barf_object *)&(self->head), renderer);
+    self->f_children_render((s_barf_object *) &(self->head), renderer);
 }
 static void p_animation_pack_status(s_animation_pack *self, const char *status) {
-  s_animation_pack_status_node *current_status = (s_animation_pack_status_node *)f_animation_pack_get_status(self, status);
+  s_animation_pack_status_node *current_status = (s_animation_pack_status_node *) f_animation_pack_get_status(self, status);
   if (current_status) {
     self->head.ticks_next_frame = current_status->ticks_next_frame;
     self->head.index_first_frame = current_status->index_first_frame;
@@ -59,23 +59,23 @@ static void p_animation_pack_status(s_animation_pack *self, const char *status) 
 static void p_animation_pack_delete(s_animation_pack *self) {
   f_dictionary_free(&(self->statuses));
   if (self->f_children_delete)
-    self->f_children_delete((s_barf_object *)self);
+    self->f_children_delete((s_barf_object *) self);
 }
 s_barf_object *f_animation_pack_malloc(s_animation_pack *holder, const char *source, s_point destination, size_t width, size_t height,
-  unsigned int ticks_next_frame) {
+    unsigned int ticks_next_frame) {
   s_animation_pack *result = holder;
-  if ((result) || (result = (s_animation_pack *)d_malloc(sizeof(s_animation_pack)))) {
+  if ((result) || (result = (s_animation_pack *) d_malloc(sizeof(s_animation_pack)))) {
     memset(result, 0, sizeof(s_animation_pack));
-    if ((result = (s_animation_pack *)f_animation_malloc((s_animation *)result, source, destination, width, height, ticks_next_frame))) {
+    if ((result = (s_animation_pack *) f_animation_malloc((s_animation *) result, source, destination, width, height, ticks_next_frame))) {
       result->f_children_render = result->head.head.head.f_barf_render;
       result->f_children_delete = result->head.head.head.f_barf_delete;
       result->ticks_next_frame = ticks_next_frame;
       result->head.behaviour = e_animation_behaviour_hidden;
       f_dictionary_initialize(&(result->statuses), sizeof(s_animation_pack_status_node));
-      result->head.head.head.f_barf_render = (l_barf_render)p_animation_pack_render;
-      result->head.head.head.f_barf_status = (l_barf_status)p_animation_pack_status;
-      result->head.head.head.f_barf_delete = (l_barf_delete)p_animation_pack_delete;
+      result->head.head.head.f_barf_render = (l_barf_render) p_animation_pack_render;
+      result->head.head.head.f_barf_status = (l_barf_status) p_animation_pack_status;
+      result->head.head.head.f_barf_delete = (l_barf_delete) p_animation_pack_delete;
     }
   }
-  return (s_barf_object *)result;
+  return (s_barf_object *) result;
 }

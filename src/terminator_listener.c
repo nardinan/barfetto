@@ -29,7 +29,7 @@ static e_barf_object_listener_processed_events p_terminator_listen(struct s_barf
 }
 s_barf_object *f_terminator_listener_malloc(void) {
   s_barf_object *result;
-  if ((result = (s_barf_object *)d_malloc(sizeof(s_barf_object)))) {
+  if ((result = (s_barf_object *) d_malloc(sizeof(s_barf_object)))) {
     memset(result, 0, sizeof(s_barf_object));
     result->f_barf_listen = p_terminator_listen;
   }

@@ -1,5 +1,5 @@
 /**
-* MIT License
+ * MIT License
  * Copyright (c) [2026] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -39,48 +39,42 @@ static int p_ui_single_line_get_cursor_position_in_pixels(s_ui_single_line_field
       TTF_SizeText(self->head.reference_font, self->head.content, &(position_x), &(position_height));
       self->head.content[cursor_position] = backup_character;
     } else
-      position_x = (int)f_ui_label_get_width_content(&(self->head));
+      position_x = (int) f_ui_label_get_width_content(&(self->head));
   }
   return position_x;
 }
 static void p_ui_single_line_field_render(s_ui_single_line_field *self, struct s_renderer *renderer) {
-  SDL_Rect destination = {
-    .x = (self->position.origin.x - renderer->selected_camera->visible_area.origin.x),
-    .y = (self->position.origin.y - renderer->selected_camera->visible_area.origin.y),
-    .w = self->position.width,
-    .h = self->position.height
-  };
+  SDL_Rect destination = {.x = (self->position.origin.x - renderer->selected_camera->visible_area.origin.x),
+      .y = (self->position.origin.y - renderer->selected_camera->visible_area.origin.y),
+      .w = self->position.width,
+      .h = self->position.height};
   int cursor_image_position_x = p_ui_single_line_get_cursor_position_in_pixels(self), delta_position_x = 0;
   self->head.destination.x = self->position.origin.x + d_ui_single_line_field_container_extra_space_pixels;
   self->head.destination.y = self->position.origin.y + d_ui_single_line_field_container_extra_space_pixels;
   self->head.visible_area.width = self->position.width - (2 * d_ui_single_line_field_container_extra_space_pixels);
   self->head.visible_area.height = self->position.height - (2 * d_ui_single_line_field_container_extra_space_pixels);
   if ((self->head.head.flag & e_ui_object_component_dont_draw_shadow) != e_ui_object_component_dont_draw_shadow) {
-    SDL_Rect destination_shadow = {
-      .x = (destination.x + d_ui_single_line_field_container_shadow_displacement_pixels),
-      .y = (destination.y + d_ui_single_line_field_container_shadow_displacement_pixels),
-      .w = destination.w,
-      .h = destination.h
-    };
-    SDL_SetRenderDrawColor(renderer->renderer, self->shadow_color.red, self->shadow_color.green,
-      self->shadow_color.blue, self->shadow_color.alpha);
+    SDL_Rect destination_shadow = {.x = (destination.x + d_ui_single_line_field_container_shadow_displacement_pixels),
+        .y = (destination.y + d_ui_single_line_field_container_shadow_displacement_pixels),
+        .w = destination.w,
+        .h = destination.h};
+    SDL_SetRenderDrawColor(renderer->renderer, self->shadow_color.red, self->shadow_color.green, self->shadow_color.blue, self->shadow_color.alpha);
     SDL_RenderFillRect(renderer->renderer, &destination_shadow);
   }
   if ((self->head.head.flag & e_ui_object_component_dont_draw_background) != e_ui_object_component_dont_draw_background) {
-    SDL_SetRenderDrawColor(renderer->renderer, self->background_color.red, self->background_color.green,
-      self->background_color.blue, self->background_color.alpha);
+    SDL_SetRenderDrawColor(renderer->renderer, self->background_color.red, self->background_color.green, self->background_color.blue,
+        self->background_color.alpha);
     SDL_RenderFillRect(renderer->renderer, &destination);
   }
   if ((self->head.head.flag & e_ui_object_component_dont_draw_border) != e_ui_object_component_dont_draw_border) {
-    SDL_SetRenderDrawColor(renderer->renderer, self->border_color.red, self->border_color.green, self->border_color.blue,
-      self->border_color.alpha);
+    SDL_SetRenderDrawColor(renderer->renderer, self->border_color.red, self->border_color.green, self->border_color.blue, self->border_color.alpha);
     SDL_RenderDrawRect(renderer->renderer, &destination);
   }
   self->head.visible_area.origin.x = 0;
   if ((delta_position_x = cursor_image_position_x - (self->position.width - (2 * d_ui_single_line_field_container_extra_space_pixels))) > 0)
-    self->head.visible_area.origin.x = (float)delta_position_x;
+    self->head.visible_area.origin.x = (float) delta_position_x;
   if (self->f_children_render)
-    self->f_children_render((s_barf_object *)&(self->head), renderer);
+    self->f_children_render((s_barf_object *) &(self->head), renderer);
   if ((self->head.head.active) && ((self->head.head.flag & e_ui_object_component_dont_draw_cursor) != e_ui_object_component_dont_draw_cursor) &&
       (self->head.reference_font) && (self->reference_clock) && (self->cursor_blink_milliseconds > 0)) {
     /* the blink phase is derived from the elapsed time through a modulo, without resetting the clock, so the same
@@ -99,7 +93,7 @@ static e_barf_object_listener_processed_events p_ui_single_line_field_listen(s_u
   int mouse_x, mouse_y;
   e_barf_object_listener_processed_events result = e_barf_object_listener_processed_event_ignored;
   if (f_camera_get_mouse_position(renderer->selected_camera, &mouse_x, &mouse_y) & SDL_BUTTON_LMASK) {
-    if (f_rectangle_contains_point(self->position, (s_point){(float)mouse_x, (float)mouse_y}))
+    if (f_rectangle_contains_point(self->position, (s_point) {(float) mouse_x, (float) mouse_y}))
       self->head.head.active = true;
     else
       self->head.head.active = false;
@@ -163,14 +157,14 @@ static e_barf_object_listener_processed_events p_ui_single_line_field_listen(s_u
 }
 static void p_ui_single_line_field_delete(s_ui_single_line_field *self) {
   if (self->f_children_delete)
-    self->f_children_delete((s_barf_object *)self);
+    self->f_children_delete((s_barf_object *) self);
 }
 s_barf_object *f_ui_single_line_field_malloc(s_ui_single_line_field *holder, s_time_manager_clock *reference_clock, const char *content,
-  TTF_Font *reference_font, s_rectangle position) {
+    TTF_Font *reference_font, s_rectangle position) {
   s_ui_single_line_field *result = holder;
-  if ((result) || (result = (s_ui_single_line_field *)d_malloc(sizeof(s_ui_single_line_field)))) {
+  if ((result) || (result = (s_ui_single_line_field *) d_malloc(sizeof(s_ui_single_line_field)))) {
     memset(result, 0, sizeof(s_ui_single_line_field));
-    if ((result = (s_ui_single_line_field *)f_ui_label_malloc((s_ui_label *)result, content, reference_font, position.origin))) {
+    if ((result = (s_ui_single_line_field *) f_ui_label_malloc((s_ui_label *) result, content, reference_font, position.origin))) {
       result->f_children_render = result->head.head.head.f_barf_render;
       result->f_children_delete = result->head.head.head.f_barf_delete;
       result->position = position;
@@ -183,10 +177,10 @@ s_barf_object *f_ui_single_line_field_malloc(s_ui_single_line_field *holder, s_t
       if (content)
         result->cursor_position = strlen(content);
       result->editable = true;
-      result->head.head.head.f_barf_render = (l_barf_render)p_ui_single_line_field_render;
-      result->head.head.head.f_barf_listen = (l_barf_listen)p_ui_single_line_field_listen;
-      result->head.head.head.f_barf_delete = (l_barf_delete)p_ui_single_line_field_delete;
+      result->head.head.head.f_barf_render = (l_barf_render) p_ui_single_line_field_render;
+      result->head.head.head.f_barf_listen = (l_barf_listen) p_ui_single_line_field_listen;
+      result->head.head.head.f_barf_delete = (l_barf_delete) p_ui_single_line_field_delete;
     }
   }
-  return (s_barf_object *)result;
+  return (s_barf_object *) result;
 }

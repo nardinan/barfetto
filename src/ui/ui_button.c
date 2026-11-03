@@ -86,12 +86,12 @@ static e_barf_object_listener_processed_events p_ui_button_listen(s_ui_button *s
 }
 static void p_ui_button_delete(s_ui_button *self) {
   if (self->f_children_delete)
-    self->f_children_delete((s_barf_object *)self);
+    self->f_children_delete((s_barf_object *) self);
 }
 s_barf_object *f_ui_button_malloc(s_ui_button *holder, s_time_manager_clock *reference_clock, const char *content, TTF_Font *reference_font,
     s_rectangle position, l_ui_button_click on_single_left_click, l_ui_button_click on_double_left_click) {
   s_ui_button *result = holder;
-  if ((result) || (result = (s_ui_button *)d_malloc(sizeof(s_ui_button)))) {
+  if ((result) || (result = (s_ui_button *) d_malloc(sizeof(s_ui_button)))) {
     memset(result, 0, sizeof(s_ui_button));
     if ((result = (s_ui_button *) f_ui_single_line_field_malloc((s_ui_single_line_field *) result, NULL, content, reference_font, position))) {
       result->f_children_render = result->head.head.head.head.f_barf_render;
@@ -115,10 +115,10 @@ s_barf_object *f_ui_button_malloc(s_ui_button *holder, s_time_manager_clock *ref
       result->on_single_left_click = on_single_left_click;
       result->on_double_left_click = on_double_left_click;
       result->reference_clock = reference_clock;
-      result->head.head.head.head.f_barf_render = (l_barf_render)p_ui_button_render;
-      result->head.head.head.head.f_barf_listen = (l_barf_listen)p_ui_button_listen;
-      result->head.head.head.head.f_barf_delete = (l_barf_delete)p_ui_button_delete;
+      result->head.head.head.head.f_barf_render = (l_barf_render) p_ui_button_render;
+      result->head.head.head.head.f_barf_listen = (l_barf_listen) p_ui_button_listen;
+      result->head.head.head.head.f_barf_delete = (l_barf_delete) p_ui_button_delete;
     }
   }
-  return (s_barf_object *)result;
+  return (s_barf_object *) result;
 }

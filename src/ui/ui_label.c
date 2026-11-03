@@ -1,5 +1,5 @@
 /**
-* MIT License
+ * MIT License
  * Copyright (c) [2026] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,14 +24,14 @@
 #include "../../include/barfetto/renderer.h"
 static void p_ui_label_render(s_ui_label *self, struct s_renderer *renderer) {
   if (self->reference_font) {
-    if ((self->head.unoptimized_surface) || (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font,
-      d_ui_label_get_printable_content(self), (SDL_Color){self->font_color.red, self->font_color.green, self->font_color.blue, self->font_color.alpha}))) {
+    if ((self->head.unoptimized_surface) ||
+        (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font, d_ui_label_get_printable_content(self),
+             (SDL_Color) {self->font_color.red, self->font_color.green, self->font_color.blue, self->font_color.alpha}))) {
       if ((!self->head.texture) && (self->head.unoptimized_surface))
         self->head.texture = SDL_CreateTextureFromSurface(renderer->renderer, self->head.unoptimized_surface);
       if (self->head.texture) {
         int picked_width, picked_height;
-        if ((self->visible_area.width == 0) &&
-          (self->visible_area.height == 0)) {
+        if ((self->visible_area.width == 0) && (self->visible_area.height == 0)) {
           picked_width = (self->head.unoptimized_surface->w - self->visible_area.origin.x);
           picked_height = (self->head.unoptimized_surface->h - self->visible_area.origin.y);
         } else {
@@ -44,20 +44,14 @@ static void p_ui_label_render(s_ui_label *self, struct s_renderer *renderer) {
               ? self->visible_area.height
               : (self->head.unoptimized_surface->h - self->visible_area.origin.y);
         }
-        SDL_Rect destination = {
-          .x = (self->destination.x - renderer->selected_camera->visible_area.origin.x),
-          .y = (self->destination.y - renderer->selected_camera->visible_area.origin.y),
-          .w = picked_width,
-          .h = picked_height
-        }, source = {
-          .x = self->visible_area.origin.x,
-          .y = self->visible_area.origin.y,
-          .w = picked_width,
-          .h = picked_height
-        };
+        SDL_Rect destination = {.x = (self->destination.x - renderer->selected_camera->visible_area.origin.x),
+                     .y = (self->destination.y - renderer->selected_camera->visible_area.origin.y),
+                     .w = picked_width,
+                     .h = picked_height},
+                 source = {.x = self->visible_area.origin.x, .y = self->visible_area.origin.y, .w = picked_width, .h = picked_height};
         SDL_RenderCopy(renderer->renderer, self->head.texture, &source, &destination);
       }
-      }
+    }
   }
 }
 static void p_ui_label_delete(s_ui_label *self) {
@@ -74,15 +68,15 @@ static void p_ui_label_delete(s_ui_label *self) {
 }
 s_barf_object *f_ui_label_malloc(s_ui_label *holder, const char *content, TTF_Font *reference_font, s_point destination) {
   s_ui_label *result = holder;
-  if ((result) || (result = (s_ui_label *)d_malloc(sizeof(s_ui_label)))) {
+  if ((result) || (result = (s_ui_label *) d_malloc(sizeof(s_ui_label)))) {
     memset(result, 0, sizeof(s_ui_label));
     result->destination = destination;
     result->reference_font = reference_font;
     f_ui_label_update_text(result, content);
-    result->head.head.f_barf_render = (l_barf_render)p_ui_label_render;
-    result->head.head.f_barf_delete = (l_barf_delete)p_ui_label_delete;
+    result->head.head.f_barf_render = (l_barf_render) p_ui_label_render;
+    result->head.head.f_barf_delete = (l_barf_delete) p_ui_label_delete;
   }
-  return (s_barf_object *)result;
+  return (s_barf_object *) result;
 }
 void f_ui_label_force_refresh(s_ui_label *self) {
   if (self->head.unoptimized_surface) {
@@ -116,8 +110,9 @@ void f_ui_label_update_text(s_ui_label *self, const char *content) {
 float f_ui_label_get_width_content(s_ui_label *self) {
   float width = 0;
   if (self->reference_font) {
-    if ((self->head.unoptimized_surface) || (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font,
-      d_ui_label_get_printable_content(self), (SDL_Color){self->font_color.red, self->font_color.green, self->font_color.blue, self->font_color.alpha}))) {
+    if ((self->head.unoptimized_surface) ||
+        (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font, d_ui_label_get_printable_content(self),
+             (SDL_Color) {self->font_color.red, self->font_color.green, self->font_color.blue, self->font_color.alpha}))) {
       width = self->head.unoptimized_surface->w;
     }
   }
@@ -126,8 +121,9 @@ float f_ui_label_get_width_content(s_ui_label *self) {
 float f_ui_label_get_height_content(s_ui_label *self) {
   float height = 0;
   if (self->reference_font) {
-    if ((self->head.unoptimized_surface) || (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font,
-      d_ui_label_get_printable_content(self), (SDL_Color){self->font_color.red, self->font_color.green, self->font_color.blue, self->font_color.alpha}))) {
+    if ((self->head.unoptimized_surface) ||
+        (self->head.unoptimized_surface = TTF_RenderText_Blended(self->reference_font, d_ui_label_get_printable_content(self),
+             (SDL_Color) {self->font_color.red, self->font_color.green, self->font_color.blue, self->font_color.alpha}))) {
       height = self->head.unoptimized_surface->h;
     }
   }

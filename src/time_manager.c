@@ -1,5 +1,5 @@
 /**
-* MIT License
+ * MIT License
  * Copyright (c) [$YEAR] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,7 +26,7 @@ static void p_time_manager_clock_group_delete(s_time_manager_clock_group *clock_
 }
 void f_time_manager_initialize(s_time_manager *time_manager) {
   f_dictionary_initialize_custom(&(time_manager->groups), sizeof(s_time_manager_clock_group), NULL,
-    (l_dictionary_node_delete)p_time_manager_clock_group_delete);
+      (l_dictionary_node_delete) p_time_manager_clock_group_delete);
 }
 void f_time_manager_delete(s_time_manager *time_manager) {
   f_dictionary_free(&(time_manager->groups));
@@ -35,12 +35,12 @@ s_time_manager_clock *f_time_manager_get_clock(s_time_manager *time_manager, con
   s_time_manager_clock_group *group;
   s_time_manager_clock *result = NULL;
   bool created = false;
-  if ((group = (s_time_manager_clock_group *)f_dictionary_get_or_create_informed(&(time_manager->groups), group_name, &created))) {
+  if ((group = (s_time_manager_clock_group *) f_dictionary_get_or_create_informed(&(time_manager->groups), group_name, &created))) {
     if (created) {
       f_dictionary_initialize(&(group->clocks), sizeof(s_time_manager_clock));
       group->time_speed = 1.0;
     }
-    if ((result = (s_time_manager_clock *)f_dictionary_get_or_create_informed(&(group->clocks), clock_name, &created))) {
+    if ((result = (s_time_manager_clock *) f_dictionary_get_or_create_informed(&(group->clocks), clock_name, &created))) {
       if (created) {
         gettimeofday(&(result->last_update), NULL);
         result->reference_group = group;
@@ -53,7 +53,7 @@ s_time_manager_clock *f_time_manager_get_clock(s_time_manager *time_manager, con
 void f_time_manager_set_group_speed(s_time_manager *time_manager, const char *group_name, double time_speed) {
   s_time_manager_clock_group *group;
   bool created = false;
-  if ((group = (s_time_manager_clock_group *)f_dictionary_get_or_create_informed(&(time_manager->groups), group_name, &created))) {
+  if ((group = (s_time_manager_clock_group *) f_dictionary_get_or_create_informed(&(time_manager->groups), group_name, &created))) {
     if (created)
       f_dictionary_initialize(&(group->clocks), sizeof(s_time_manager_clock));
     group->time_speed = time_speed;
@@ -64,7 +64,7 @@ time_t f_time_manager_elapsed_time_milliseconds(s_time_manager_clock *clock, boo
   struct timeval current_update, delta;
   gettimeofday(&current_update, NULL);
   timersub(&(current_update), &(clock->last_update), &(delta));
-  result = (time_t)((((delta.tv_usec / 1000.0) + (delta.tv_sec * 1000.0)) * clock->time_speed) * clock->reference_group->time_speed);
+  result = (time_t) ((((delta.tv_usec / 1000.0) + (delta.tv_sec * 1000.0)) * clock->time_speed) * clock->reference_group->time_speed);
   if (update)
     f_time_manager_reset(clock);
   return result;

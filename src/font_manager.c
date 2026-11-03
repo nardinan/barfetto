@@ -1,5 +1,5 @@
 /**
-* MIT License
+ * MIT License
  * Copyright (c) [2026] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,15 +34,14 @@ static void p_font_manager_family_delete(s_font_manager_family *font_family) {
 }
 void f_font_manager_initialize(s_font_manager *font_manager, const char *reference_base_path) {
   memset(font_manager, 0, sizeof(s_font_manager));
-  f_dictionary_initialize_custom(&(font_manager->fonts), sizeof(s_font_manager_family), NULL,
-    (l_dictionary_node_delete)p_font_manager_family_delete);
+  f_dictionary_initialize_custom(&(font_manager->fonts), sizeof(s_font_manager_family), NULL, (l_dictionary_node_delete) p_font_manager_family_delete);
   font_manager->reference_base_path = reference_base_path;
 }
 void f_font_manager_delete(s_font_manager *font_manager) {
   f_dictionary_free(&(font_manager->fonts));
 }
 TTF_Font *f_font_manager_get(s_font_manager *font_manager, const char *name, size_t size) {
-  s_font_manager_family *font_family = (s_font_manager_family *)f_dictionary_get_or_create(&(font_manager->fonts), name);
+  s_font_manager_family *font_family = (s_font_manager_family *) f_dictionary_get_or_create(&(font_manager->fonts), name);
   TTF_Font *result = NULL;
   if (font_family) {
     size_t index_font = 0;

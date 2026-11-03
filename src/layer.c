@@ -23,7 +23,7 @@
 #include "../include/barfetto/layer.h"
 void f_layer_append(s_layer *layer, s_barf_object *object) {
   d_assert((object->owner == NULL));
-  f_list_append(&(layer->list), (s_list_node *)object, e_list_insert_tail);
+  f_list_append(&(layer->list), (s_list_node *) object, e_list_insert_tail);
   object->owner = layer;
   layer->last = object;
 }
@@ -31,7 +31,7 @@ s_barf_object *f_layer_remove(s_barf_object *object) {
   if (object->owner) {
     if (object->owner->last == object)
       object->owner->last = NULL;
-    f_list_remove(&(object->owner->list), (s_list_node *)object);
+    f_list_remove(&(object->owner->list), (s_list_node *) object);
     object->owner = NULL;
   }
   return object;
