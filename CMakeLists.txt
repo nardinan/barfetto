@@ -9,7 +9,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 if (NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-    set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
+  set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
 endif ()
 
 add_subdirectory(coremio)
@@ -39,12 +39,11 @@ set(barfetto_codebase
   src/ui/ui_button.c
   src/ui/ui_label.c
   src/ui/ui_single_line_field.c
-  # this is to debug, just an entry point. It is going to disappear
-  tainted_sails/src/tainted_sails.c
 )
-add_executable(barfetto ${barfetto_codebase})
 
-include_directories(barfetto PRIVATE 
+add_library(barfetto STATIC ${barfetto_codebase})
+
+include_directories(barfetto PRIVATE
   coremio/include
   ${SDL2_INCLUDE_DIRS}
   ${SDL2_TTF_INCLUDE_DIRS}
@@ -62,3 +61,4 @@ target_link_libraries(barfetto PRIVATE
   Threads::Threads
   m
 )
+
