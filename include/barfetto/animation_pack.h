@@ -23,24 +23,26 @@
 #ifndef MANAGED_ANIMATION_H
 #define MANAGED_ANIMATION_H
 #include "animation.h"
+#include "barfetto/time_manager.h"
 typedef struct s_animation_pack_status_node {
   s_dictionary_node head;
   s_color mask;
-  unsigned int index_first_frame, index_last_frame, ticks_next_frame;
+  unsigned int index_first_frame, index_last_frame, milliseconds_next_frame;
   e_animation_behaviours behaviour;
   float speed_x, speed_y;
 } s_animation_pack_status_node;
 typedef struct s_animation_pack {
   s_animation head;
   s_dictionary statuses;
+  s_animation_pack_status_node *current_status;
   s_color mask;
   float speed_x, speed_y;
-  unsigned int ticks_next_frame, ticks_last;
+  unsigned int milliseconds_next_frame, milliseconds_last;
+  s_time_manager_clock *reference_clock;
   l_barf_render f_children_render;
   l_barf_delete f_children_delete;
 } s_animation_pack;
 extern s_animation_pack_status_node *f_animation_pack_get_status(s_animation_pack *self, const char *status);
-extern s_barf_object *f_animation_pack_malloc(s_animation_pack *holder, const char *source, s_point destination, size_t width, size_t height,
-    unsigned int ticks_next_frame) __attribute__((unused));
+extern s_barf_object *f_animation_pack_malloc(s_animation_pack *holder, s_time_manager_clock *reference_clock, const char *source, s_point destination,
+    size_t width, size_t height, time_t milliseconds_next_frame) __attribute__((unused));
 #endif /* MANAGED_ANIMATION_H */
-

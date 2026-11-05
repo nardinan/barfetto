@@ -153,8 +153,11 @@ e_renderer_statuses f_renderer_launch(s_renderer *renderer) {
         f_camera_disable_rendering(renderer->selected_camera, renderer);
       }
     renderer->selected_camera = NULL;
-    if (renderer->f_barf_update_scene)
-      result = renderer->f_barf_update_scene(renderer);
+    if (renderer->f_barf_update_scene) {
+      e_renderer_statuses current_scene_status = renderer->f_barf_update_scene(renderer);
+      if (current_scene_status != e_renderer_status_running) /* do not ovverride result, except if needed */
+        result = current_scene_status;
+    }
     SDL_RenderPresent(renderer->renderer);
     final_ticks = SDL_GetTicks();
     if ((elapsed_ticks = (final_ticks - initial_ticks)) < ticks_per_frame)

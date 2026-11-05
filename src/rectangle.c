@@ -74,8 +74,8 @@ bool f_rectangle_intersection(const s_rectangle left, const s_rectangle right, s
     out->origin.x = origin_x;
     out->origin.y = origin_y;
     if ((far_x > origin_x) && (far_y > origin_y)) {
-      out->width = (size_t) (far_x - origin_x);
-      out->height = (size_t) (far_y - origin_y);
+      out->width = (far_x - origin_x);
+      out->height = (far_y - origin_y);
       result = true;
     } else {
       out->width = 0;

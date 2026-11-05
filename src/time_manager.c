@@ -21,6 +21,7 @@
  * SOFTWARE.
  */
 #include "../include/barfetto/time_manager.h"
+#include <time.h>
 static void p_time_manager_clock_group_delete(s_time_manager_clock_group *clock_group) {
   f_dictionary_free(&(clock_group->clocks));
 }
@@ -50,25 +51,40 @@ s_time_manager_clock *f_time_manager_get_clock(s_time_manager *time_manager, con
   }
   return result;
 }
+static void p_time_manager_clock_fold(s_time_manager_clock *clock, void *payload) {
+  struct timeval current_update, delta;
+  gettimeofday(&current_update, NULL);
+  timersub(&current_update, &(clock->last_update), &delta);
+  clock->accumulated_milliseconds += ((((delta.tv_usec / 1000.0) + (delta.tv_sec * 1000.0)) * clock->time_speed) * clock->reference_group->time_speed);
+  clock->last_update = current_update;
+}
 void f_time_manager_set_group_speed(s_time_manager *time_manager, const char *group_name, double time_speed) {
   s_time_manager_clock_group *group;
   bool created = false;
   if ((group = (s_time_manager_clock_group *) f_dictionary_get_or_create_informed(&(time_manager->groups), group_name, &created))) {
     if (created)
       f_dictionary_initialize(&(group->clocks), sizeof(s_time_manager_clock));
+    else
+      f_dictionary_foreach(&(group->clocks), (l_dictionary_node_visit) p_time_manager_clock_fold, NULL);
     group->time_speed = time_speed;
   }
+}
+extern void f_time_manager_set_clock_speed(s_time_manager_clock *clock, double time_speed) {
+  p_time_manager_clock_fold(clock, NULL);
+  clock->time_speed = time_speed;
 }
 time_t f_time_manager_elapsed_time_milliseconds(s_time_manager_clock *clock, bool update) {
   time_t result = 0;
   struct timeval current_update, delta;
   gettimeofday(&current_update, NULL);
   timersub(&(current_update), &(clock->last_update), &(delta));
-  result = (time_t) ((((delta.tv_usec / 1000.0) + (delta.tv_sec * 1000.0)) * clock->time_speed) * clock->reference_group->time_speed);
+  result = (time_t) ((((delta.tv_usec / 1000.0) + (delta.tv_sec * 1000.0)) * clock->time_speed) * clock->reference_group->time_speed) +
+      clock->accumulated_milliseconds;
   if (update)
     f_time_manager_reset(clock);
   return result;
 }
 void f_time_manager_reset(s_time_manager_clock *clock) {
+  clock->accumulated_milliseconds = 0;
   gettimeofday(&(clock->last_update), NULL);
 }

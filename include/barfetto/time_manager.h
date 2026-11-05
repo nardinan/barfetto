@@ -1,5 +1,5 @@
 /**
-* MIT License
+ * MIT License
  * Copyright (c) [$YEAR] The Barfing Fox - TBF [nardinan (andrea@nardinan.it)]
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,7 +22,10 @@
  */
 #ifndef TIME_MANAGER_H
 #define TIME_MANAGER_H
+#include <limits.h>
+#include <stdint.h>
 #include <sys/time.h>
+#include <time.h>
 #include "coremio/dictionary.h"
 typedef struct s_time_manager_clock_group {
   s_dictionary_node head;
@@ -33,15 +36,17 @@ typedef struct s_time_manager_clock {
   s_dictionary_node head;
   const s_time_manager_clock_group *reference_group;
   struct timeval last_update;
-  double time_speed;
+  double time_speed, accumulated_milliseconds;
 } s_time_manager_clock;
 typedef struct s_time_manager {
   s_dictionary groups;
 } s_time_manager;
+#define d_maximum_time_t (((time_t) -1 > (time_t) 0) ? (time_t) -1 : ((time_t) (((uintmax_t) 1 << ((sizeof(time_t) * CHAR_BIT) - 1)) - 1)))
 extern void f_time_manager_initialize(s_time_manager *time_manager);
 extern void f_time_manager_delete(s_time_manager *time_manager);
 extern s_time_manager_clock *f_time_manager_get_clock(s_time_manager *time_manager, const char *group_name, const char *clock_name);
 extern void f_time_manager_set_group_speed(s_time_manager *time_manager, const char *group_name, double time_speed);
+extern void f_time_manager_set_clock_speed(s_time_manager_clock *clock, double time_speed);
 extern time_t f_time_manager_elapsed_time_milliseconds(s_time_manager_clock *clock, bool update);
 extern void f_time_manager_reset(s_time_manager_clock *clock);
-#endif //TIME_MANAGER_H
+#endif // TIME_MANAGER_H

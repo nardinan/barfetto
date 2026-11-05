@@ -82,8 +82,8 @@ static void p_ui_single_line_field_render(s_ui_single_line_field *self, struct s
     if (((f_time_manager_elapsed_time_milliseconds(self->reference_clock, false) / self->cursor_blink_milliseconds) % 2) == 0) {
       SDL_Rect cursor_position = {
           .x = cursor_image_position_x, .y = 0, .w = d_ui_single_line_field_container_extra_space_pixels, .h = TTF_FontHeight(self->head.reference_font)};
-      cursor_position.x += (int) (self->head.destination.x - self->head.visible_area.origin.x);
-      cursor_position.y += (int) self->head.destination.y;
+      cursor_position.x += (int) (self->head.destination.x - self->head.visible_area.origin.x - renderer->selected_camera->visible_area.origin.x);
+      cursor_position.y += (int) (self->head.destination.y - renderer->selected_camera->visible_area.origin.y);
       SDL_SetRenderDrawColor(renderer->renderer, self->cursor_color.red, self->cursor_color.green, self->cursor_color.blue, self->cursor_color.alpha);
       SDL_RenderDrawRect(renderer->renderer, &cursor_position);
     }

@@ -37,7 +37,8 @@ static s_color p_color_json_unserialize(s_json *json, s_json_node *node) {
     result.red = f_json_get_value(json, node, "d", (long) 0);
     result.green = f_json_get_value(json, node, "d", (long) 1);
     result.blue = f_json_get_value(json, node, "d", (long) 2);
-    result.alpha = f_json_get_value(json, node, "d", (long) 3);
+    if (f_json_get_node(json, node, "d", (long) 3))
+      result.alpha = f_json_get_value(json, node, "d", (long) 3);
   }
   return result;
 }

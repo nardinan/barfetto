@@ -59,28 +59,30 @@ static e_barf_object_listener_processed_events p_ui_button_listen(s_ui_button *s
     result = self->f_children_listen((s_barf_object *) &(self->head), renderer, event);
   if ((result != e_barf_object_listener_processed_event_consumed) && (result != e_barf_object_listener_processed_event_terminate)) {
     int mouse_x, mouse_y;
-    if (((f_camera_get_mouse_position(renderer->selected_camera, &mouse_x, &mouse_y)) & SDL_BUTTON_LMASK) && (self->has_pending_single_click))
-      self->has_pending_single_click = false;
-    if ((event) && (event->type == SDL_MOUSEBUTTONDOWN) && (event->button.button == SDL_BUTTON_LEFT)) {
-      if ((f_rectangle_contains_point(self->head.position, (s_point) {(float) mouse_x, (float) mouse_y})) && (self->reference_clock)) {
-        const time_t elapsed_since_last_click = f_time_manager_elapsed_time_milliseconds(self->reference_clock, false) - self->elapsed_at_last_click;
-        if (elapsed_since_last_click < d_ui_button_double_click_threshold_milliseconds) {
-          self->has_pending_single_click = false;
-          self->elapsed_at_last_click = f_time_manager_elapsed_time_milliseconds(self->reference_clock, false);
-          if (!self->auto_release_after_click)
-            self->clicked = !(self->clicked);
-          if (self->on_double_left_click)
-            self->on_double_left_click(self, renderer);
-          result = e_barf_object_listener_processed_event_consumed;
-        } else {
-          self->elapsed_at_last_click = f_time_manager_elapsed_time_milliseconds(self->reference_clock, false);
-          self->has_pending_single_click = true;
-          if (!self->auto_release_after_click)
-            self->clicked = !(self->clicked);
-          result = e_barf_object_listener_processed_event_consumed;
+    if (self->clickable) {
+      if ((event) && (event->type == SDL_MOUSEBUTTONDOWN) && (event->button.button == SDL_BUTTON_LEFT)) {
+        f_camera_get_mouse_position(renderer->selected_camera, &mouse_x, &mouse_y);
+        if ((f_rectangle_contains_point(self->head.position, (s_point) {(float) mouse_x, (float) mouse_y})) && (self->reference_clock)) {
+          const time_t elapsed_since_last_click = f_time_manager_elapsed_time_milliseconds(self->reference_clock, false) - self->elapsed_at_last_click;
+          if ((self->has_pending_single_click) && (elapsed_since_last_click < d_ui_button_double_click_threshold_milliseconds)) {
+            self->elapsed_at_last_click = f_time_manager_elapsed_time_milliseconds(self->reference_clock, false);
+            self->has_pending_single_click = false;
+            if (!self->auto_release_after_click)
+              self->clicked = !(self->clicked);
+            if (self->on_double_left_click)
+              self->on_double_left_click(self, renderer);
+            result = e_barf_object_listener_processed_event_consumed;
+          } else {
+            self->elapsed_at_last_click = f_time_manager_elapsed_time_milliseconds(self->reference_clock, false);
+            self->has_pending_single_click = true;
+            if (!self->auto_release_after_click)
+              self->clicked = !(self->clicked);
+            result = e_barf_object_listener_processed_event_consumed;
+          }
         }
       }
-    }
+    } else
+      self->has_pending_single_click = false;
   }
   return result;
 }

@@ -43,7 +43,8 @@ set(barfetto_codebase
 
 add_library(barfetto STATIC ${barfetto_codebase})
 
-include_directories(barfetto PRIVATE
+target_include_directories(barfetto PUBLIC
+  include
   coremio/include
   ${SDL2_INCLUDE_DIRS}
   ${SDL2_TTF_INCLUDE_DIRS}
