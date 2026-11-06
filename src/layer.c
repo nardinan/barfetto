@@ -27,6 +27,10 @@ void f_layer_append(s_layer *layer, s_barf_object *object) {
   object->owner = layer;
   layer->last = object;
 }
+void f_layer_sort(s_layer *layer, l_list_to_swap f_list_node_compare) {
+  f_list_sort(&(layer->list), f_list_node_compare);
+  layer->last = (s_barf_object *) layer->list.tail;
+}
 s_barf_object *f_layer_remove(s_barf_object *object) {
   if (object->owner) {
     if (object->owner->last == object)

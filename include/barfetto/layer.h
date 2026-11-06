@@ -22,15 +22,15 @@
  */
 #ifndef LAYER_H
 #define LAYER_H
-#include "barf_object.h"
 #include <coremio/assert.h>
 #include <coremio/list.h>
+#include "barf_object.h"
 typedef struct s_layer {
   s_list list;
   s_barf_object *last;
   bool visible;
 } s_layer;
 extern void f_layer_append(s_layer *layer, s_barf_object *object);
+extern void f_layer_sort(s_layer *layer, l_list_to_swap f_list_node_compare);
 extern s_barf_object *f_layer_remove(s_barf_object *object);
 #endif /* LAYER_H */
-
